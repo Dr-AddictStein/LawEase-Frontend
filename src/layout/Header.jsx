@@ -5,6 +5,7 @@ import { FaBars } from "react-icons/fa6";
 import { AiOutlineClose } from "react-icons/ai";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useLogout } from "../hooks/useLogout";
+import { Link as ScrollLink } from "react-scroll";
 
 const Header = () => {
   const { logout } = useLogout();
@@ -39,7 +40,7 @@ const Header = () => {
               to="/"
               className="font-semibold  rounded-[12px] px-3  flex items-center gap-1 "
             >
-              <button onClick={(e)=>{
+              <button onClick={(e) => {
                 logout();
                 setUsedIsLoggedIn(false);
               }}>
@@ -54,7 +55,11 @@ const Header = () => {
 
             </div> :       <div className=" hidden lg:flex items-center gap-5">
               <Link to="/">Home</Link>
-              <Link to="/services">Services</Link>
+              <Link>
+                <ScrollLink to="services" smooth={true} duration={500}>
+                  Services
+                </ScrollLink>
+              </Link>
               <Link to="/login">Log In</Link>
               <Link
                 to="/join"

@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import { Link } from "react-router-dom";
+import { Element } from "react-scroll";
 
 const Home = () => {
   return (
@@ -22,21 +23,23 @@ const Home = () => {
               </button>
             </Link>
           </div>
-          <h2 className="py-5 text-[32px] font-semibold">Services</h2>
-          <div className=" grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {[1, 2, 3, 4, 5, 6].map((item, ind) => (
-              <div className="bg-white rounded-[8px] flex items-center flex-col gap-3 border border-[#00000066] p-5">
-                <img src={`/s${item}.png`} className="w-[60px]" alt="" />
-                <p className="text-[#6C6C6C]">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-                  mattis convallis facilisis. Fusce vel nulla diam. Orci varius
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Maecenas ut risus vehicula, cursus ex sit amet,
-                  sodales.
-                </p>
-              </div>
-            ))}
-          </div>
+          <Element name="services">
+            <h2 className="py-5 text-[32px] font-semibold">Services</h2>
+            <div className=" grid grid-cols-1 lg:grid-cols-3 gap-5">
+              {[1, 2, 3, 4, 5, 6].map((item, ind) => (
+                <div className="bg-white rounded-[8px] flex items-center flex-col gap-3 border border-[#00000066] p-5" key={ind}>
+                  <img src={`/s${item}.png`} className="w-[60px]" alt="" />
+                  <p className="text-[#6C6C6C]">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                    mattis convallis facilisis. Fusce vel nulla diam. Orci varius
+                    natoque penatibus et magnis dis parturient montes, nascetur
+                    ridiculus mus. Maecenas ut risus vehicula, cursus ex sit amet,
+                    sodales.
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Element>
           <h2 className="py-5 text-[32px] font-semibold">Just three steps</h2>
           <div className=" border border-black bg-white justify-center rounded-[12px] p-8 flex flex-col lg:flex-row items-center gap-4 lg:gap-8">
             <div>
