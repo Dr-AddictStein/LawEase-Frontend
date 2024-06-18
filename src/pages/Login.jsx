@@ -17,7 +17,11 @@ const Login = () => {
 
     const response = await login(email, password);
 
-    if(response)alert(response)
+    if(response){
+      alert(response)
+      setemail("");
+      setpassword("");
+    }
     
   }
   return (
@@ -54,6 +58,8 @@ const Login = () => {
                   className="border-b min-w-[280px] lg:min-w-[350px]  bg-transparent border-black py-1 outline-none"
                   required
                   type="Email"
+                  name="mail"
+                  value={email}
                   onChange={(e) => {
                     setemail(e.target.value);
                   }}
@@ -65,6 +71,8 @@ const Login = () => {
                   className="border-b min-w-[280px] lg:min-w-[350px]  bg-transparent border-black py-1 outline-none"
                   required
                   type="password"
+                  name="password"
+                  value={password}
                   onChange={(e) => {
                     setpassword(e.target.value);
                   }}
