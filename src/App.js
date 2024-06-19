@@ -25,7 +25,7 @@ function App() {
         <Route path="/appointments/:lawyer_id" element={user?<Appointments />:<Home/>} />
         <Route path="/availablity/:lawyer_id" element={user?<Availability />:<Home/>} />
         <Route path="/profile/:lawyer_id" element={user? <Profile />:<Home/>} />
-        <Route path="/book-appointment" element={<Book />} />
+        <Route path="/book-appointment/:lawyer_id" element={<Book />} />
  
       </Routes>
     

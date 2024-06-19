@@ -73,7 +73,7 @@ const SearchResult = () => {
             </div>
 
             <div className="mb-6">
-              <Link to="/book-appointment" className="bg-[#4D836030] border border-black text-nowrap text-[19px] lg:text-[20px] font-medium rounded-[8px] shadow-md px-3 py-3">
+              <Link to={`/book-appointment/${item._id}`} className="bg-[#4D836030] border border-black text-nowrap text-[19px] lg:text-[20px] font-medium rounded-[8px] shadow-md px-3 py-3">
                 Book Appointment
               </Link>
             </div>
