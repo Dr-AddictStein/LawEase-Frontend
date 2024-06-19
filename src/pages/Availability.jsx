@@ -46,9 +46,13 @@ const Availability = () => {
       setCurrAv(availability.filter((av)=>{
         return av.date===lastAdded
       })[0]);
+      setDate(availability?.filter((av)=>{
+        return av?.date===lastAdded
+      })[0]?.date);
     }
     else if(availability){
       setCurrAv(availability[0]);
+      setDate(availability[0]?.date);
     }
   },[availability])
 
