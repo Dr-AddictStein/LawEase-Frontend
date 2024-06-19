@@ -31,7 +31,7 @@ const Appointments = () => {
           </Link>
           <Link
             className="w-full border bg-[#F5F5F5] py-3 text-[20px] text-center  rounded-[8px]"
-            to="/availablity"
+            to={`/availablity/${user.user._id}`}
           >
             Availability
           </Link>

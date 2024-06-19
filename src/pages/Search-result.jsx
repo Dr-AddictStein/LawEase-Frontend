@@ -47,7 +47,7 @@ const SearchResult = () => {
         </Link>
         <div className=" my-[20px] lg:my-[40px] flex items-start lg:items-center justify-between flex-col lg:flex-row gap-5 lg:gap-0">
           <h2 className="text-[20px] lg:text-[30px]">
-            Here is a list of lawyers to chose from
+            Here is a list of lawyers to choose from
           </h2>
           <select
             className="border border-black px-3 py-2 rounded-[8px]"
