@@ -160,8 +160,8 @@ const Profile = () => {
                     }}
                   >
                     <option value="">Expertise</option>
-                    <option value="Criminal law">Criminal law</option>
-                    <option value="Public">Public </option>
+                    <option value="Criminal Lawyer">Criminal law</option>
+                    <option value="Public Lawyer">Public </option>
                   </select>
                   <select
                     className="px-5 py-2 border bg-[#E9E9E9A6] border-[#CECECE] rounded-[8px]"

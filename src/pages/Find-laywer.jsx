@@ -6,32 +6,32 @@ const FindLaywer = () => {
   const laywerCategory = [
     {
       image: "/f1.png",
-      href: "/search-result",
+      href: "/search-result/Criminal Lawyer",
       title: "Criminal Lawyer",
     },
     {
       image: "/f2.png",
-      href: "/search-result",
+      href: "/search-result/Employment Lawyer",
       title: "Employment Lawyer",
     },
     {
       image: "/f3.png",
-      href: "/search-result",
+      href: "/search-result/Immigration Lawyer",
       title: "Immigration Lawyer",
     },
     {
       image: "/f4.png",
-      href: "/search-result",
+      href: "/search-result/Personal Injury and Claim Lawyer",
       title: "Personal Injury and Claim Lawyer",
     },
     {
       image: "/f5.png",
-      href: "/search-result",
+      href: "/search-result/Civil Lawyer",
       title: "Civil Lawyer",
     },
     {
       image: "/f6.png",
-      href: "/search-result",
+      href: "/search-result/Tax Lawyer",
       title: "Tax Lawyer",
     },
   ];

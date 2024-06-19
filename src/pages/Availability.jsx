@@ -1,10 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../layout/Header";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaPhoneAlt } from "react-icons/fa";
 import Calendar from "react-calendar";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Availability = () => {
+  const navigate = useNavigate();
+  const { lawyer_id } = useParams();
+  const { user } = useAuthContext();
+
+
+
+  useEffect(() => {
+    if (!user || user.user._id !== lawyer_id) {
+      navigate('/')
+    }
+  }, [lawyer_id])
   const [value, onChange] = useState(new Date());
   return (
     <div>

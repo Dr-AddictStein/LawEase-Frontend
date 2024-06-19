@@ -21,9 +21,9 @@ function App() {
         <Route path="/join" element={user?<Home/>:<Join />} />
         <Route path="/login" element={user?<Home/>:<Login />} />
         <Route path="/find-lawyer" element={<FindLaywer />} />
-        <Route path="/search-result" element={<SearchResult />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/availablity" element={<Availability />} />
+        <Route path="/search-result/:category" element={<SearchResult />} />
+        <Route path="/appointments/:lawyer_id" element={user?<Appointments />:<Home/>} />
+        <Route path="/availablity/:lawyer_id" element={user?<Availability />:<Home/>} />
         <Route path="/profile/:lawyer_id" element={user? <Profile />:<Home/>} />
         <Route path="/book-appointment" element={<Book />} />
  
