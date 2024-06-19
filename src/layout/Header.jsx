@@ -31,7 +31,7 @@ const Header = () => {
               <span className="pt-1"> Home</span>
             </Link>
             <Link
-              to="/profile"
+              to={`/profile/${user.user._id}`}
               className="font-semibold  rounded-[12px] px-3  flex items-center gap-1 "
             >
               <span className="pt-1"> Profile</span>
