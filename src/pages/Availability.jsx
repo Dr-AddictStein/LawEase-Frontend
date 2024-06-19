@@ -136,7 +136,7 @@ const Availability = () => {
             </Link>
             <Link
               className="w-full bg-[#4D7D5D] py-3 text-[20px] text-center text-white rounded-[8px]"
-              to="/availablity"
+              to={`/availablity/${user.user._id}`}
             >
               Availability
             </Link>

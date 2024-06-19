@@ -54,8 +54,13 @@ const Book = () => {
     if (lawyer && formattedDate) {
       const stash = lawyer?.availability?.filter((ld) => {
         return ld.date === formattedDate
-      })[0].times;
-      setSlots(stash);
+      })[0];
+      if(stash){
+        setSlots(stash.times);
+      }
+      else{
+        setSlots([]);
+      }
     }
   }, [formattedDate])
 
@@ -110,7 +115,7 @@ const Book = () => {
       <Header isuser={true} />
       <div className="mx-auto px-5 pb-5 lg:pb-0 lg:px-0 max-w-[970px] mt-10">
         <div className="flex items-center justify-between">
-          <Link to="/search-result" className="flex items-center  gap-2">
+          <Link to="/find-lawyer" className="flex items-center  gap-2">
             <BsArrowLeft className=" w-4 h-4" />
             <p className="text-[14px] ">Go Back</p>
           </Link>
