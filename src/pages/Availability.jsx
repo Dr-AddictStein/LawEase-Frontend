@@ -79,6 +79,19 @@ const Availability = () => {
   const handleAddRange = async (e) => {
     e.preventDefault();
 
+    const testo = startTime + "-" + endTime;
+
+    for(let i=0;i<availability.length;i++){
+      if(availability[i].date===currAv.date){
+        for(let j=0;j<availability[i].times.length;j++){
+          if(availability[i].times[j].range===testo){
+            return;
+          }
+        }
+      }
+    }
+
+
     let dex = currAv;
     dex.times.push({
       range: startTime + "-" + endTime
