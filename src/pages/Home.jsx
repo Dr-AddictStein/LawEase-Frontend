@@ -23,24 +23,8 @@ const Home = () => {
               </button>
             </Link>
           </div>
-          <Element name="services">
-            <h2 className="py-5 text-[32px] font-semibold">Services</h2>
-            <div className=" grid grid-cols-1 lg:grid-cols-3 gap-5">
-              {[1, 2, 3, 4, 5, 6].map((item, ind) => (
-                <div className="bg-white rounded-[8px] flex items-center flex-col gap-3 border border-[#00000066] p-5" key={ind}>
-                  <img src={`/s${item}.png`} className="w-[60px]" alt="" />
-                  <p className="text-[#6C6C6C]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-                    mattis convallis facilisis. Fusce vel nulla diam. Orci varius
-                    natoque penatibus et magnis dis parturient montes, nascetur
-                    ridiculus mus. Maecenas ut risus vehicula, cursus ex sit amet,
-                    sodales.
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Element>
-          <h2 className="py-5 text-[32px] font-semibold">Just three steps</h2>
+  
+          <h2 className="py-5 text-[32px] font-semibold text-center">Just three simple steps to get legal help</h2>
           <div className=" border border-black bg-white justify-center rounded-[12px] p-8 flex flex-col lg:flex-row items-center gap-4 lg:gap-8">
             <div>
               <img src="/j1.png" alt="" />
@@ -57,8 +41,30 @@ const Home = () => {
               <p className="text-[20px] mt-3 text-center">Book Appointment</p>
             </div>
           </div>
-        </div>
+          <Element name="services">
+  <h2 className="py-5 text-[32px] font-semibold text-center">Services for Lawyers</h2>
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    {[
+      { id: 1, icon: '/s1.png', title: 'Availability Management', description: 'Expert advice to solve your business challenges and drive growth.' },
+      { id: 2, icon: '/s2.png', title: 'Profile Management', description: 'High-quality software development tailored to your needs.' },
+      { id: 3, icon: '/s3.png', title: 'Reach Clients', description: 'Creative and impactful design solutions for your brand.' },
+      { id: 4, icon: '/s4.png', title: 'Marketing', description: 'Effective marketing strategies to reach and engage your audience.' },
+      { id: 5, icon: '/s5.png', title: 'Support', description: 'Reliable support services to keep your operations running smoothly.' },
+      { id: 6, icon: '/s6.png', title: 'Training', description: 'Comprehensive training programs to enhance your team’s skills.' },
+    ].map((item) => (
+      <div className="bg-white rounded-[8px] flex items-center flex-col gap-3 border border-[#00000066] p-5" key={item.id}>
+        <img src={item.icon} className="w-[60px]" alt={`${item.title} icon`} />
+        <p className="text-[#000] text-[18px] font-semibold text-center">{item.title}</p>
+        <p className="text-[#6C6C6C] text-center">{item.description}</p>
       </div>
+    ))}
+  </div>
+</Element>
+
+        </div>
+        
+      </div>
+      
       <Footer />
     </>
   );
