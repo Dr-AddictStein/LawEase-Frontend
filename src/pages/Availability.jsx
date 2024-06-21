@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../layout/Header";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { FaPhoneAlt } from "react-icons/fa";
 import Calendar from "react-calendar";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
@@ -13,9 +12,9 @@ const Availability = () => {
 
   useEffect(() => {
     if (!user || user.user._id !== lawyer_id) {
-      navigate('/')
+      navigate('/');
     }
-  }, [lawyer_id]);
+  }, [lawyer_id, navigate, user]);
 
   const [lawyer, setLawyer] = useState(null);
   const [availability, setAvailability] = useState([]);
@@ -23,11 +22,11 @@ const Availability = () => {
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("00:00");
   const [lastAdded, setLastAdded] = useState("");
+  const [date, setDate] = useState(new Date());
 
   const fetchLawyer = async () => {
     const response = await fetch(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
     const data = await response.json();
-
     setLawyer(data);
   };
 
@@ -41,94 +40,102 @@ const Availability = () => {
     }
   }, [lawyer]);
 
-  useEffect(()=>{
-    if(lastAdded && availability){
-      setCurrAv(availability.filter((av)=>{
-        return av.date===lastAdded
-      })[0]);
-      setDate(availability?.filter((av)=>{
-        return av?.date===lastAdded
-      })[0]?.date);
+  useEffect(() => {
+    if (availability.length) {
+      const currentDateStr = date.toDateString();
+      const currentAvailability = availability.find((av) => av.date === currentDateStr);
+      if (currentAvailability) {
+        setCurrAv(currentAvailability);
+        // Update start time to the end time of the last slot
+        const lastSlotEndTime = currentAvailability.times.length
+          ? currentAvailability.times[currentAvailability.times.length - 1].range.split('-')[1]
+          : "00:00";
+        setStartTime(lastSlotEndTime);
+        // Update end time options accordingly
+        updateEndTimeOptions(lastSlotEndTime);
+      } else {
+        setCurrAv({ date: currentDateStr, times: [] });
+        setStartTime("00:00");
+        setEndTime("00:00");
+      }
     }
-    else if(availability){
-      setCurrAv(availability[0]);
-      setDate(availability[0]?.date);
-    }
-  },[availability])
-
-  const [date, setDate] = useState(new Date());
-
-  const [times, setTimes] = useState([]);
+  }, [availability, date]);
 
   const handleDateChange = (date) => {
     setDate(date);
-    for (let i = 0; i < availability.length; i++) {
-      if (availability[i].date === date.toDateString()) {
-        setCurrAv(availability[i]);
-        return;
-      }
+    const selectedAvailability = availability.find((av) => av.date === date.toDateString());
+    if (selectedAvailability) {
+      setCurrAv(selectedAvailability);
+      const lastSlotEndTime = selectedAvailability.times.length
+        ? selectedAvailability.times[selectedAvailability.times.length - 1].range.split('-')[1]
+        : "00:00";
+      setStartTime(lastSlotEndTime);
+      updateEndTimeOptions(lastSlotEndTime);
+    } else {
+      setCurrAv({ date: date.toDateString(), times: [] });
+      setStartTime("00:00");
+      setEndTime("00:00");
     }
-    setCurrAv(
-      {
-        date: date.toDateString(),
-        times: []
-      }
-    );
+  };
+
+  const handleStartTimeChange = (e) => {
+    const selectedStartTime = e.target.value;
+    setStartTime(selectedStartTime);
+    updateEndTimeOptions(selectedStartTime);
+  };
+
+  const updateEndTimeOptions = (startTime) => {
+    const filteredEndTimeOptions = [...Array(24).keys()]
+      .filter(hour => `${hour.toString().padStart(2, '0')}:00` > startTime)
+      .map(hour => `${hour.toString().padStart(2, '0')}:00`);
+    if (filteredEndTimeOptions.length > 0) {
+      setEndTime(filteredEndTimeOptions[0]);
+    } else {
+      setEndTime(startTime);
+    }
   };
 
   const handleAddRange = async (e) => {
     e.preventDefault();
+    const newRange = `${startTime}-${endTime}`;
 
-    const testo = startTime + "-" + endTime;
-
-    for(let i=0;i<availability.length;i++){
-      if(availability[i].date===currAv.date){
-        for(let j=0;j<availability[i].times.length;j++){
-          if(availability[i].times[j].range===testo){
-            return;
-          }
-        }
-      }
+    if (currAv.times.some(time => time.range === newRange)) {
+      return;
     }
 
+    const updatedCurrAv = { ...currAv, times: [...currAv.times, { range: newRange }] };
+    setCurrAv(updatedCurrAv);
+    setLastAdded(updatedCurrAv.date);
 
-    let dex = currAv;
-    dex.times.push({
-      range: startTime + "-" + endTime
-    });
+    const updatedAvailability = availability.map(av =>
+      av.date === updatedCurrAv.date ? updatedCurrAv : av
+    );
 
-    setCurrAv(dex);
-    setLastAdded(dex.date);
-    let tensor = availability;
-    let found = false;
-    for (let i = 0; i < tensor.length; i++) {
-      if (tensor[i].date === currAv.date) {
-        tensor[i].times = currAv.times;
-        found = true;
-        break;
-      }
+    if (!availability.some(av => av.date === updatedCurrAv.date)) {
+      updatedAvailability.push(updatedCurrAv);
     }
 
-    if (!found) {
-      tensor.push(currAv);
-    }
-    setAvailability(tensor);
+    setAvailability(updatedAvailability);
 
-    const toSend = {
-      ...lawyer,
-      availability: availability
-    };
+    const updatedLawyer = { ...lawyer, availability: updatedAvailability };
 
     try {
       const response = await axios.patch(
         `http://localhost:4000/api/lawyer/updateLawyer/${lawyer_id}`,
-        toSend
+        updatedLawyer
       );
       console.log("Form submitted successfully!", response.data);
       fetchLawyer();
+
+      // Reset start time to end time of last slot
+      const lastSlotEndTime = updatedCurrAv.times.length
+        ? updatedCurrAv.times[updatedCurrAv.times.length - 1].range.split('-')[1]
+        : "00:00";
+      setStartTime(lastSlotEndTime);
+      updateEndTimeOptions(lastSlotEndTime);
     } catch (error) {
-      if (error.response.status === 409) {
-        alert("Данные уже существуют");
+      if (error.response?.status === 409) {
+        alert("Data already exists");
       } else {
         console.log(error);
       }
@@ -137,131 +144,87 @@ const Availability = () => {
 
   return (
     <div>
-      <div>
-        <Header isloggedIn={true} />
-        <div className="mx-auto px-5 lg:px-0  max-w-[970px]">
-          <div className="grid my-5 grid-cols-2 gap-5">
-            <Link
-              className="w-full border bg-[#F5F5F5] py-3 text-[20px] text-center  rounded-[8px]"
-              to={`/appointments/${user.user._id}`}
-            >
-              Appointments
-            </Link>
-            <Link
-              className="w-full bg-[#4D7D5D] py-3 text-[20px] text-center text-white rounded-[8px]"
-              to={`/availablity/${user.user._id}`}
-            >
-              Availability
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-            <div className=" lg:col-span-3 bg-[#F9F9F9] border border-[#00000080]  rounded-[8px]  ">
-              <p className="text-center text-sm mt-5">
-                Add Availability {(currAv) ? "for " + currAv.date : "..."}
-              </p>
-              <div className="pl-5 lg:pl-20 mt-10 flex items-center gap-10">
-                <h1 className="text-[20px] font-medium">Start time</h1>
-                <select
-                  className="px-8 py-2 border border-gray-500 rounded-[8px]"
-                  name=""
-                  id=""
-                  value={startTime}
-                  onChange={(e) => {
-                    setStartTime(e.target.value);
-                  }}
-                >
-                  <option value="00:00">00:00</option>
-                  <option value="01:00">01:00</option>
-                  <option value="02:00">02:00</option>
-                  <option value="03:00">03:00</option>
-                  <option value="04:00">04:00</option>
-                  <option value="05:00">05:00</option>
-                  <option value="06:00">06:00</option>
-                  <option value="07:00">07:00</option>
-                  <option value="08:00">08:00</option>
-                  <option value="09:00">09:00</option>
-                  <option value="10:00">10:00</option>
-                  <option value="11:00">11:00</option>
-                  <option value="12:00">12:00</option>
-                  <option value="13:00">13:00</option>
-                  <option value="14:00">14:00</option>
-                  <option value="15:00">15:00</option>
-                  <option value="16:00">16:00</option>
-                  <option value="17:00">17:00</option>
-                  <option value="18:00">18:00</option>
-                  <option value="19:00">19:00</option>
-                  <option value="20:00">20:00</option>
-                  <option value="21:00">21:00</option>
-                  <option value="22:00">22:00</option>
-                  <option value="23:00">23:00</option>
-                  <option value="24:00">24:00</option>
-                </select>
-              </div>
-              <div className="pl-5 lg:pl-20 mt-5 flex items-center gap-10">
-                <h1 className="text-[20px] mr-[7px] font-medium">End time</h1>
-                <select
-                  className="px-8 py-2 border border-gray-500 rounded-[8px]"
-                  name=""
-                  id=""
-                  value={endTime}
-                  onChange={(e) => {
-                    setEndTime(e.target.value);
-                  }}
-                >
-                  <option value="00:00">00:00</option>
-                  <option value="01:00">01:00</option>
-                  <option value="02:00">02:00</option>
-                  <option value="03:00">03:00</option>
-                  <option value="04:00">04:00</option>
-                  <option value="05:00">05:00</option>
-                  <option value="06:00">06:00</option>
-                  <option value="07:00">07:00</option>
-                  <option value="08:00">08:00</option>
-                  <option value="09:00">09:00</option>
-                  <option value="10:00">10:00</option>
-                  <option value="11:00">11:00</option>
-                  <option value="12:00">12:00</option>
-                  <option value="13:00">13:00</option>
-                  <option value="14:00">14:00</option>
-                  <option value="15:00">15:00</option>
-                  <option value="16:00">16:00</option>
-                  <option value="17:00">17:00</option>
-                  <option value="18:00">18:00</option>
-                  <option value="19:00">19:00</option>
-                  <option value="20:00">20:00</option>
-                  <option value="21:00">21:00</option>
-                  <option value="22:00">22:00</option>
-                  <option value="23:00">23:00</option>
-                  <option value="24:00">24:00</option>
-                </select>
-              </div>
-              <div className="mt-10 flex mb-5 lg:mb-0 items-center justify-center">
-                <button className="px-8 py-2 border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]" onClick={handleAddRange}>
-                  + Add
-                </button>
-              </div>
+      <Header isloggedIn={true} />
+      <div className="mx-auto px-5 lg:px-0 max-w-[970px]">
+        <div className="grid my-5 grid-cols-2 gap-5">
+          <Link
+            className="w-full border bg-[#F5F5F5] py-3 text-[20px] text-center rounded-[8px]"
+            to={`/appointments/${user.user._id}`}
+          >
+            Appointments
+          </Link>
+          <Link
+            className="w-full bg-[#4D7D5D] py-3 text-[20px] text-center text-white rounded-[8px]"
+            to={`/availablity/${user.user._id}`}
+          >
+            Availability
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <div className="lg:col-span-3 bg-[#F9F9F9] border border-[#00000080] rounded-[8px]">
+            <p className="text-center text-sm mt-5">
+              Add Availability {(currAv) ? `for ${currAv.date}` : "..."}
+            </p>
+            <div className="pl-5 lg:pl-20 mt-10 flex items-center gap-10">
+              <h1 className="text-[20px] font-medium">Start time</h1>
+              <select
+                className="px-8 py-2 border border-gray-500 rounded-[8px]"
+                value={startTime}
+                onChange={handleStartTimeChange}
+              >
+                {/* Render options */}
+                {[...Array(24).keys()].map(hour => {
+                  const hourStr = hour.toString().padStart(2, '0') + ":00";
+                  return <option key={hourStr} value={hourStr}>{hourStr}</option>;
+                })}
+              </select>
             </div>
-            <div className="w-full">
-              <Calendar onChange={handleDateChange} value={date} />
+            <div className="pl-5 lg:pl-20 mt-5 flex items-center gap-10">
+              <h1 className="text-[20px] font-medium">End time</h1>
+              <select
+                className="px-8 py-2 border border-gray-500 rounded-[8px]"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              >
+                {/* Render filtered options */}
+                {[...Array(24).keys()].map(hour => {
+                  const hourStr = hour.toString().padStart(2, '0') + ":00";
+                  if (`${hourStr}` > startTime) {
+                    return <option key={hourStr} value={hourStr}>{hourStr}</option>;
+                  }
+                  return null;
+                })}
+              </select>
+            </div>
+            <div className="mt-10 flex mb-5 lg:mb-0 items-center justify-center">
+              <button
+                className="px-8 py-2 border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
+                onClick={handleAddRange}
+              >
+                + Add
+              </button>
             </div>
           </div>
-          {(currAv && currAv.times) && <div className="mt-5 mb-5 lg:mb-0 border w-full border-[#00000080] rounded-[8px]">
+          <div className="w-full">
+            <Calendar onChange={handleDateChange} value={date} minDate={new Date()} />
+          </div>
+        </div>
+        {currAv && currAv.times && (
+          <div className="mt-5 mb-5 lg:mb-0 border w-full border-[#00000080] rounded-[8px]">
             <div className="border-b border-[#00000080] py-3 px-5">
               <p className="text-sm">
-                Current Availability {(currAv) ? "for " + currAv.date : "..."}
+                Current Availability for {currAv.date}
               </p>
             </div>
-            <div className=" px-5 lg:px-20 py-10 flex items-center   gap-5  lg:gap-y-8 lg:gap-x-20 flex-wrap">
-              {
-                currAv.times.map((item, index) => {
-                  return (
-                    <div key={index} className="border px-5 py-2 border-black rounded-[4px] bg-[#D9D9D97A]">{item.range}</div>
-                  )
-                })
-              }
+            <div className="px-5 lg:px-20 py-10 flex items-center gap-5 lg:gap-y-8 lg:gap-x-20 flex-wrap">
+              {currAv.times.map((item, index) => (
+                <div key={index} className="border px-5 py-2 border-black rounded-[4px] bg-[#D9D9D97A]">
+                  {item.range}
+                </div>
+              ))}
             </div>
-          </div>}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

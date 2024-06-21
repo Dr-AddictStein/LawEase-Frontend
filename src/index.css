@@ -81,7 +81,12 @@ padding: 5px 0;
     font-size: 13px;
 }
 
-.react-calendar__tile--active{
+/* .react-calendar__tile--active{
     background: #4D7D5D;
     color: white;
-}
+} */
+.react-calendar__tile--active {
+    background: green !important;
+    color: white !important;
+  }
+  
