@@ -7,6 +7,7 @@ const SearchResult = () => {
   const { category } = useParams();
 
   const [lawyers, setLawyers] = useState([]);
+  const [location,setLocation]=useState("");
 
   const [filteredLawyers, setFilteredLawyers] = useState([]);
 
@@ -34,6 +35,30 @@ const SearchResult = () => {
     console.log("OTOTOTOTOT",filteredLawyers)
   },[filteredLawyers])
 
+  useEffect(()=>{
+    console.log("SO",location);
+    
+    if(!location || location==="Location"){
+      if (lawyers) {
+        const dex = lawyers.filter((l) => {
+          return (l.category === category);
+        });
+  
+        setFilteredLawyers(dex);
+      }
+      return;
+    }
+
+    let dex=[];
+    for(let i=0;i<lawyers.length;i++){
+      if(lawyers[i].city===location){
+        dex.push(lawyers[i]);
+      }
+    }
+
+    setFilteredLawyers(dex);
+  },[location]);
+
   
   return (
     <div className="bg-[#F1FFF4] pb-10 min-h-screen">
@@ -53,10 +78,23 @@ const SearchResult = () => {
             className="border border-black px-3 py-2 rounded-[8px]"
             name=""
             id=""
+            value={location}
+            onChange={(e)=>{
+              setLocation(e.target.value);
+            }}
+          >
+            <option>Location</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Pune">Pune</option>
+          </select>
+          <select
+            className="border border-black px-3 py-2 rounded-[8px]"
+            name=""
+            id=""
           >
             <option>Sort</option>
-            <option value="">Experience</option>
-            <option value="">Availablity</option>
+            <option value="Experience">Experience</option>
+            <option value="Availablity">Availablity</option>
           </select>
         </div>
         {filteredLawyers.map((item, ind) => (
