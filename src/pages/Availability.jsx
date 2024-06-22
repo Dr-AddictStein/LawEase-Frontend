@@ -4,6 +4,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
+import { BsArrowLeft, BsX } from "react-icons/bs";
 
 const Availability = () => {
   const navigate = useNavigate();
@@ -25,9 +26,12 @@ const Availability = () => {
   const [date, setDate] = useState(new Date());
 
   const fetchLawyer = async () => {
-    const response = await fetch(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
-    const data = await response.json();
-    setLawyer(data);
+    try {
+      const response = await axios.get(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
+      setLawyer(response.data);
+    } catch (error) {
+      console.error("Error fetching lawyer:", error);
+    }
   };
 
   useEffect(() => {
@@ -46,12 +50,10 @@ const Availability = () => {
       const currentAvailability = availability.find((av) => av.date === currentDateStr);
       if (currentAvailability) {
         setCurrAv(currentAvailability);
-        // Update start time to the end time of the last slot
         const lastSlotEndTime = currentAvailability.times.length
           ? currentAvailability.times[currentAvailability.times.length - 1].range.split('-')[1]
           : "00:00";
         setStartTime(lastSlotEndTime);
-        // Update end time options accordingly
         updateEndTimeOptions(lastSlotEndTime);
       } else {
         setCurrAv({ date: currentDateStr, times: [] });
@@ -127,7 +129,6 @@ const Availability = () => {
       console.log("Form submitted successfully!", response.data);
       fetchLawyer();
 
-      // Reset start time to end time of last slot
       const lastSlotEndTime = updatedCurrAv.times.length
         ? updatedCurrAv.times[updatedCurrAv.times.length - 1].range.split('-')[1]
         : "00:00";
@@ -142,9 +143,33 @@ const Availability = () => {
     }
   };
 
+  const handleDeleteRange = async (range) => {
+    const filteredTimes = currAv.times.filter(time => time.range !== range);
+    const updatedCurrAv = { ...currAv, times: filteredTimes };
+    setCurrAv(updatedCurrAv);
+
+    const updatedAvailability = availability.map(av =>
+      av.date === updatedCurrAv.date ? updatedCurrAv : av
+    );
+    setAvailability(updatedAvailability);
+
+    const updatedLawyer = { ...lawyer, availability: updatedAvailability };
+
+    try {
+      const response = await axios.patch(
+        `http://localhost:4000/api/lawyer/updateLawyer/${lawyer_id}`,
+        updatedLawyer
+      );
+      console.log("Range deleted successfully!", response.data);
+      fetchLawyer();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
-      <Header isloggedIn={true} />
+      <Header isLoggedIn={true} />
       <div className="mx-auto px-5 lg:px-0 max-w-[970px]">
         <div className="grid my-5 grid-cols-2 gap-5">
           <Link
@@ -155,7 +180,7 @@ const Availability = () => {
           </Link>
           <Link
             className="w-full bg-[#4D7D5D] py-3 text-[20px] text-center text-white rounded-[8px]"
-            to={`/availablity/${user.user._id}`}
+            to={`/availability/${user.user._id}`}
           >
             Availability
           </Link>
@@ -163,7 +188,7 @@ const Availability = () => {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           <div className="lg:col-span-3 bg-[#F9F9F9] border border-[#00000080] rounded-[8px]">
             <p className="text-center text-sm mt-5">
-              Add Availability {(currAv) ? `for ${currAv.date}` : "..."}
+              Add Availability {currAv ? `for ${currAv.date}` : "..."}
             </p>
             <div className="pl-5 lg:pl-20 mt-10 flex items-center gap-10">
               <h1 className="text-[20px] font-medium">Start time</h1>
@@ -172,9 +197,8 @@ const Availability = () => {
                 value={startTime}
                 onChange={handleStartTimeChange}
               >
-                {/* Render options */}
                 {[...Array(24).keys()].map(hour => {
-                  const hourStr = hour.toString().padStart(2, '0') + ":00";
+                  const hourStr = `${hour.toString().padStart(2, '0')}:00`;
                   return <option key={hourStr} value={hourStr}>{hourStr}</option>;
                 })}
               </select>
@@ -186,9 +210,8 @@ const Availability = () => {
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
               >
-                {/* Render filtered options */}
                 {[...Array(24).keys()].map(hour => {
-                  const hourStr = hour.toString().padStart(2, '0') + ":00";
+                  const hourStr = `${hour.toString().padStart(2, '0')}:00`;
                   if (`${hourStr}` > startTime) {
                     return <option key={hourStr} value={hourStr}>{hourStr}</option>;
                   }
@@ -212,14 +235,22 @@ const Availability = () => {
         {currAv && currAv.times && (
           <div className="mt-5 mb-5 lg:mb-0 border w-full border-[#00000080] rounded-[8px]">
             <div className="border-b border-[#00000080] py-3 px-5">
-              <p className="text-sm">
+            <p className="text-sm">
                 Current Availability for {currAv.date}
               </p>
             </div>
             <div className="px-5 lg:px-20 py-10 flex items-center gap-5 lg:gap-y-8 lg:gap-x-20 flex-wrap">
               {currAv.times.map((item, index) => (
                 <div key={index} className="border px-5 py-2 border-black rounded-[4px] bg-[#D9D9D97A]">
-                  {item.range}
+                  <div className="flex gap-2 justify-between items-center">
+                    <p>{item.range}</p>
+                    <button
+                      className="text-white cursor-pointer flex items-center"
+                      onClick={() => handleDeleteRange(item.range)}
+                    >
+                      <BsX className="bg-red-600 rounded-full" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
