@@ -24,7 +24,7 @@ const SearchResult = () => {
   useEffect(() => {
     if (lawyers) {
       const dex = lawyers.filter((l) => {
-        return (l.category === category);
+        return (l.category.includes(category));
       });
 
       setFilteredLawyers(dex);

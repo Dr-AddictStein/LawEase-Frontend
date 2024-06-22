@@ -45,7 +45,7 @@ const FindLaywer = () => {
         <h2 className="text-[30px] font-medium text-center">
           Get in touch with the right lawyer for you !
         </h2>
-        <div className="my-5 flex items-center justify-center">
+        {/* <div className="my-5 flex items-center justify-center">
           <form className="flex items-center gap-2 border bg-white border-black rounded-[8px]  p-2">
             <input
               required
@@ -57,7 +57,7 @@ const FindLaywer = () => {
               <CiSearch className="w-5 h-5" />
             </button>
           </form>
-        </div>
+        </div> */}
         <div className=" my-5 mx-auto max-w-[970px]">
           <p className="text-[20px]  text-[#00000080]">Select one :</p>
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-10">
