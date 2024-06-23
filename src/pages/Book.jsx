@@ -40,17 +40,31 @@ const Book = () => {
     }
   }, lawyer)
 
+  const formatDateToReadableString = (dateString) => {
+    const dateObject = new Date(dateString);
+
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const dayOfWeek = days[dateObject.getDay()];
+    const month = months[dateObject.getMonth()];
+    const day = dateObject.getDate();
+    const year = dateObject.getFullYear();
+
+    return `${dayOfWeek} ${month} ${day} ${year}`;
+  };
+
   const handleDateChange = (e) => {
     const inputDate = e.target.value; // The input value in "yyyy-MM-dd" format
     setInputDate(inputDate); // Update the inputDate state
 
-    // Convert the inputDate to a Date object and then format it
-    const dateObject = new Date(inputDate);
-    const formattedDateString = dateObject.toDateString(); // Convert to desired format
+    // Format the date to "Fri Jun 28 2024"
+    const formattedDateString = formatDateToReadableString(inputDate);
     setFormattedDate(formattedDateString); // Update the formattedDate state
   };
-
+  
   useEffect(() => {
+    console.log("aaaaa",formattedDate)
     if (lawyer && formattedDate) {
       const stash = lawyer?.availability?.filter((ld) => {
         return ld.date === formattedDate
