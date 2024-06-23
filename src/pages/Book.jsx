@@ -43,15 +43,13 @@ const Book = () => {
   const formatDateToReadableString = (dateString) => {
     const dateObject = new Date(dateString);
 
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    // Get the components of the date in UTC to avoid timezone issues
+    const utcDayOfWeek = dateObject.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
+    const utcMonth = dateObject.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+    const day = dateObject.getUTCDate();
+    const year = dateObject.getUTCFullYear();
 
-    const dayOfWeek = days[dateObject.getDay()];
-    const month = months[dateObject.getMonth()];
-    const day = dateObject.getDate();
-    const year = dateObject.getFullYear();
-
-    return `${dayOfWeek} ${month} ${day} ${year}`;
+    return `${utcDayOfWeek} ${utcMonth} ${day} ${year}`;
   };
 
   const handleDateChange = (e) => {
