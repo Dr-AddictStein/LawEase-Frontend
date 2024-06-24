@@ -90,3 +90,33 @@ padding: 5px 0;
     color: white !important;
   }
   
+.category-image{
+    height: 150px; 
+  width: auto; 
+  object-fit: contain; 
+  filter: invert(20%) sepia(100%) saturate(750%) hue-rotate(60deg) brightness(100%) contrast(80%);
+  padding: 15px ;
+
+}
+
+.react-calendar__tile--booked {
+    background-color: #b5e3a8;
+    color: #f4bd1a;
+  }
+  
+  
+  .appointment-card {
+    padding: 15px; /* Add padding to the appointment details */
+  }
+  
+  .text-gray-400 {
+    color: #d1d1d1 !important;
+  }
+  
+  .text-black {
+    color: #000;
+  }
+  /* .react-calendar__tile--present {
+    border: 2px solid green !important;
+    background-color: #d1d1d1 ;
+  } */

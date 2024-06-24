@@ -23,7 +23,9 @@ const Profile = () => {
 
   const fetchLawyer = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
+      const response = await axios.get(
+        `http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`
+      );
       const fetchedLawyer = response.data;
 
       setLawyer(fetchedLawyer);
@@ -35,32 +37,34 @@ const Profile = () => {
       setDp(fetchedLawyer.image);
 
       // Prepare category options from fetched lawyer data
-      const initialCategories = fetchedLawyer.category.map(cat => ({
+      const initialCategories = fetchedLawyer.category.map((cat) => ({
         value: cat,
-        label: cat
+        label: cat,
       }));
       setSelectedCategories(initialCategories);
       setCategoryOptions(initialCategories); // Set options for the select
     } catch (error) {
-      console.error('Error fetching lawyer:', error);
+      console.error("Error fetching lawyer:", error);
     }
   };
   useEffect(() => {
-
     if (!user || user.user._id !== lawyer_id) {
-      navigate('/');
+      navigate("/");
     } else {
       fetchLawyer();
     }
   }, [user, lawyer_id, navigate]);
 
   const options = [
-    { value: 'Criminal Lawyer', label: 'Criminal Lawyer' },
-    { value: 'Employment Lawyer', label: 'Employment Lawyer' },
-    { value: 'Immigration Lawyer', label: 'Immigration Lawyer' },
-    { value: 'Personal Injury and Claim Lawyer', label: 'Personal Injury and Claim Lawyer' },
-    { value: 'Civil Lawyer', label: 'Civil Lawyer' },
-    { value: 'Tax Lawyer', label: 'Tax Lawyer' }
+    { value: "Criminal Lawyer", label: "Criminal Lawyer" },
+    { value: "Employment Lawyer", label: "Employment Lawyer" },
+    { value: "Immigration Lawyer", label: "Immigration Lawyer" },
+    {
+      value: "Personal Injury and Claim Lawyer",
+      label: "Personal Injury and Claim Lawyer",
+    },
+    { value: "Civil Lawyer", label: "Civil Lawyer" },
+    { value: "Tax Lawyer", label: "Tax Lawyer" },
   ];
 
   const handleChangeMulti = (selectedOptions) => {
@@ -69,16 +73,18 @@ const Profile = () => {
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    const thumbImageUrl = fileHandler ? await uploadFile(fileHandler, Date.now().toString()) : dp;
+    const thumbImageUrl = fileHandler
+      ? await uploadFile(fileHandler, Date.now().toString())
+      : dp;
     const updatedLawyer = {
       ...lawyer,
       firstname,
       lastname,
       experience,
-      category: selectedCategories.map(option => option.value), // Extracting values from selected options
+      category: selectedCategories.map((option) => option.value), // Extracting values from selected options
       city,
       bio,
-      image: thumbImageUrl
+      image: thumbImageUrl,
     };
 
     try {
@@ -92,19 +98,22 @@ const Profile = () => {
       if (error.response.status === 409) {
         alert("Data already exists.");
       } else {
-        console.error('Error updating lawyer:', error);
+        console.error("Error updating lawyer:", error);
       }
     }
   };
 
   const uploadFile = async (file, id) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
     try {
-      const response = await axios.post(`http://localhost:4000/api/file/image/${id}`, formData);
+      const response = await axios.post(
+        `http://localhost:4000/api/file/image/${id}`,
+        formData
+      );
       return response.data.data.url;
     } catch (error) {
-      console.error('File upload failed:', error);
+      console.error("File upload failed:", error);
       throw error;
     }
   };
@@ -170,8 +179,8 @@ const Profile = () => {
                     onChange={(e) => setCity(e.target.value)}
                   >
                     <option value="">City</option>
-                    <option value="Pune">Pune</option>
-                    <option value="Mumbai">Mumbai</option>
+                    <option value="Moose Jaw">Moose Jaw</option>
+                    <option value="Regina">Regina</option>
                   </select>
                   <Select
                     value={selectedCategories}
@@ -182,7 +191,11 @@ const Profile = () => {
                     styles={{
                       control: (baseStyles, state) => ({
                         ...baseStyles,
-                        height: state.selectProps.value && state.selectProps.value.length < 2 ? "55px" : "",
+                        height:
+                          state.selectProps.value &&
+                          state.selectProps.value.length < 2
+                            ? "55px"
+                            : "",
                       }),
                     }}
                   />
