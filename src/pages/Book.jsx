@@ -3,103 +3,93 @@ import Header from "../layout/Header";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { BsArrowLeft } from "react-icons/bs";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import enUS from "date-fns/locale/en-US";
+
+registerLocale("en-US", enUS);
+
 const Book = () => {
   const navigate = useNavigate();
-  const [active, setActive] = useState(1);
   const { lawyer_id } = useParams();
 
+  const [active, setActive] = useState(1);
   const [lawyer, setLawyer] = useState(null);
-
-  const fetchLawyer = async () => {
-    const response = await fetch(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
-    const data = await response.json();
-
-    setLawyer(data);
-  }
-  useEffect(() => {
-    fetchLawyer();
-  }, [])
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(null);
   const [slot, setSlot] = useState("");
   const [desc, setDesc] = useState("");
   const [slots, setSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(false);
 
+  const fetchLawyer = async () => {
+    const response = await fetch(
+      `http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`
+    );
+    const data = await response.json();
+    setLawyer(data);
+  };
 
-  const [inputDate, setInputDate] = useState(''); // For the input value in "yyyy-MM-dd" format
-  const [formattedDate, setFormattedDate] = useState(''); // For the formatted date
   useEffect(() => {
-    if (lawyer && formattedDate) {
-      const stash = lawyer?.availability?.filter((ld) => {
-        return ld.date === formattedDate
-      })
-      setSlots(stash);
+    fetchLawyer();
+  }, []);
+
+  useEffect(() => {
+    if (lawyer && date) {
+      const formattedDate = formatDateToReadableString(date);
+      const stash = lawyer?.availability?.filter(
+        (ld) => ld.date === formattedDate
+      )[0];
+      if (stash) {
+        setSlots(stash.times);
+      } else {
+        setSlots([]);
+      }
     }
-  }, lawyer)
+  }, [lawyer, date]);
 
-  const formatDateToReadableString = (dateString) => {
-    const dateObject = new Date(dateString);
-
-    // Get the components of the date in UTC to avoid timezone issues
-    const utcDayOfWeek = dateObject.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
-    const utcMonth = dateObject.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+  const formatDateToReadableString = (dateObject) => {
+    const utcDayOfWeek = dateObject.toLocaleDateString("en-US", {
+      weekday: "short",
+      timeZone: "UTC",
+    });
+    const utcMonth = dateObject.toLocaleDateString("en-US", {
+      month: "short",
+      timeZone: "UTC",
+    });
     const day = dateObject.getUTCDate();
     const year = dateObject.getUTCFullYear();
 
     return `${utcDayOfWeek} ${utcMonth} ${day} ${year}`;
   };
 
-  const handleDateChange = (e) => {
-    const inputDate = e.target.value; // The input value in "yyyy-MM-dd" format
-    setInputDate(inputDate); // Update the inputDate state
-
-    // Format the date to "Fri Jun 28 2024"
-    const formattedDateString = formatDateToReadableString(inputDate);
-    setFormattedDate(formattedDateString); // Update the formattedDate state
+  const handleDateChange = (date) => {
+    setDate(date);
   };
-  
-  useEffect(() => {
-    console.log("aaaaa",formattedDate)
-    if (lawyer && formattedDate) {
-      const stash = lawyer?.availability?.filter((ld) => {
-        return ld.date === formattedDate
-      })[0];
-      if(stash){
-        setSlots(stash.times);
-      }
-      else{
-        setSlots([]);
-      }
-    }
-  }, [formattedDate])
-
-  useEffect(() => {
-    console.log("NIBIR", slots)
-
-  }, [slot])
-
-
-  const [selectedSlot, setSelectedSlot] = useState(null);
 
   const handleSlotClick = (slot) => {
     setSelectedSlot(slot);
     setSlot(slot);
   };
 
-  const handleSubmit = async(e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formattedDate = formatDateToReadableString(date);
+
     const toSend = {
-      name:name,
-      phone:phone,
-      email:email,
-      date:formattedDate,
-      slot:slot,
-      desc:desc
-    }
+      name: name,
+      phone: phone,
+      email: email,
+      date: formattedDate,
+      slot: slot,
+      desc: desc,
+    };
 
     try {
       const response = await axios.post(
@@ -107,7 +97,8 @@ const Book = () => {
         toSend
       );
       console.log("Form submitted successfully!", response.data);
-      navigate('/')
+      setSuccessMessage(true);
+      setTimeout(() => navigate("/"), 5000);
     } catch (error) {
       if (error.response.status === 409) {
         alert("Данные уже существуют");
@@ -115,105 +106,106 @@ const Book = () => {
         console.log(error);
       }
     }
+  };
 
-    
-  }
-
-
-
+  const highlightDates = () => {
+    if (!lawyer || !lawyer.availability) return [];
+    return lawyer.availability.map((entry) => new Date(entry.date));
+  };
 
   return (
     <div className="bg-[#F1FFF4] min-h-screen">
       <Header isuser={true} />
       <div className="mx-auto px-5 pb-5 lg:pb-0 lg:px-0 max-w-[970px] mt-10">
         <div className="flex items-center justify-between">
-          <Link to="/find-lawyer" className="flex items-center  gap-2">
-            <BsArrowLeft className=" w-4 h-4" />
-            <p className="text-[14px] ">Go Back</p>
+          <Link to="/find-lawyer" className="flex items-center gap-2">
+            <BsArrowLeft className="w-6 h-6" />
+            <p className="text-[18px]">Go Back</p>
           </Link>
-          <h1 className="text-[30px] font-semibold">Book Appointment</h1>
+          <h1 className="text-[30px] font-semibold ml-[-80px]">
+            Book Appointment
+          </h1>
           <div></div>
         </div>
-        <p className="text-center py-5">Lawyer : {lawyer?.firstname + ' ' + lawyer?.lastname}</p>
-        <form className="w-full bg-white gap-5 border py-10 px-5 lg:px-20 border-[#00000080]">
+        <p className="text-center py-5 text-[18px]">
+          Lawyer : {lawyer?.firstname + " " + lawyer?.lastname}
+        </p>
+        <form
+          className="w-full bg-white gap-5 border py-10 px-5 lg:px-20 border-[#00000080]"
+          onSubmit={handleSubmit}
+        >
           <div className="flex items-center flex-wrap gap-5 lg:gap-10">
             <div className="flex items-center lg:w-auto justify-between lg:justify-normal w-full gap-5">
               <p className="text-[20px]">
-                {" "}
-                Name<span className="text-red-500">*</span>{" "}
+                Name<span className="text-red-500">*</span>
               </p>
               <input
                 type="text"
                 required
-                className="bg-[#E9E9E9A6] px-5  border border-[#CECECE] py-2 rounded-[8px]"
-                placeholder="Harry Sidhu"
+                className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px]"
+                placeholder="Full Name"
                 value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="flex items-center lg:w-auto justify-between lg:justify-normal w-full gap-5">
               <p className="text-[20px]">
-                {" "}
-                Contact Number<span className="text-red-500">*</span>{" "}
+                Contact Number<span className="text-red-500">*</span>
               </p>
               <input
                 type="text"
                 required
-                className="bg-[#E9E9E9A6] px-5  border border-[#CECECE] py-2 rounded-[8px]"
-                placeholder="XXX-580-XXXX"
+                className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px]"
+                placeholder="eg: 306XXX1234"
                 value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                }}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
           </div>
-          <div className="flex items-center mt-10  gap-5 lg:gap-10 flex-wrap w-full lg:w-auto justify-between lg:justify-normal">
+          <div className="flex items-center mt-10 gap-5 lg:gap-10 flex-wrap w-full lg:w-auto justify-between lg:justify-normal">
             <div className="flex w-full lg:w-auto justify-between lg:justify-normal items-center gap-5">
               <p className="text-[20px]">
-                {" "}
-                Email<span className="text-red-500">*</span>{" "}
+                Email<span className="text-red-500">*</span>
               </p>
               <input
                 type="email"
                 required
-                className="bg-[#E9E9E9A6] px-5  border border-[#CECECE] py-2 rounded-[8px]"
-                placeholder="hsidhu@gmail.com"
+                className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px] ml-[3px]"
+                placeholder="eg: johndoe@email.com"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                }}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="flex w-full lg:w-auto justify-between lg:justify-normal items-center gap-5">
+            <div className="flex w-full lg:w-auto justify-between lg:justify-normal items-center gap-5 ml-[102px]">
               <p className="text-[20px]">
-                {" "}
-                Date<span className="text-red-500">*</span>{" "}
+                Date<span className="text-red-500">*</span>
               </p>
-              <input
-                type="date"
-                required
-                className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px]"
-                value={inputDate}
+              <DatePicker
+                type={date}
+                selected={date}
                 onChange={handleDateChange}
+                highlightDates={highlightDates()}
+                dateFormat="yyyy-MM-dd"
+                className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px] cursor-pointer"
+                placeholderText="Select a date"
+                locale="en-US"
               />
             </div>
           </div>
           <div className="mt-10 flex items-start flex-col lg:flex-row gap-5">
             <p className="text-[20px]">
-              Slots<span className="text-red-500">*</span>{" "}
+              Slots<span className="text-red-500">*</span>
             </p>
-            <div className="px-5 bg-[#F5F5F5] border border-black rounded-[8px] lg:px-10 py-5 flex items-center gap-5 lg:gap-y-5 lg:gap-x-10 flex-wrap">
+            <div className="px-5 ml-[10px] bg-[#F5F5F5] border border-black rounded-[8px] lg:px-10 py-5 flex items-center gap-5 lg:gap-y-5 lg:gap-x-10 flex-wrap">
               {slots.map((sl, index) => {
                 const isSelected = selectedSlot === sl.range;
                 return (
                   <div
                     key={index}
                     onClick={() => handleSlotClick(sl.range)}
-                    className={`border px-5 py-2 border-black rounded-[4px] cursor-pointer ${isSelected ? 'bg-green-500 text-white' : 'text-black'
-                      }`}
+                    className={`border px-5 py-2 border-black rounded-[4px] cursor-pointer ${
+                      isSelected ? "bg-[#4D7D5D] text-white" : "text-black"
+                    }`}
                   >
                     {sl.range}
                   </div>
@@ -224,13 +216,25 @@ const Book = () => {
           <div className="w-full mt-5">
             <p className="text-[20px] mb-4"> Description</p>
             <div className="lg:pl-[65px]">
-              <textarea value={desc} onChange={(e)=>{
-                setDesc(e.target.value)
-              }} placeholder="(optional)" name="" rows={5} className=" bg-[#E9E9E9A6] w-full px-5  border border-[#CECECE] py-2 rounded-[8px]" id=""></textarea>
+              <textarea
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="(optional)"
+                rows={5}
+                className="bg-[#E9E9E9A6] w-full px-5 ml-[10px] border border-[#CECECE] py-2 rounded-[8px]"
+              ></textarea>
             </div>
           </div>
+          {successMessage && (
+            <div className="mt-10 text-green-500 text-center">
+              Booking Confirmed!
+            </div>
+          )}
           <div className="flex items-center mt-5 justify-center">
-            <button className="px-8 py-2 text-white flex items-center gap-2 rounded-[8px] bg-[#3B7355CC]" onClick={handleSubmit}>
+            <button
+              type="submit"
+              className="px-8 py-2 text-white flex items-center gap-2 rounded-[8px] bg-[#4D7D5D]"
+            >
               Confirm
             </button>
           </div>

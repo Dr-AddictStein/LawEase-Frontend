@@ -120,3 +120,11 @@ padding: 5px 0;
     border: 2px solid green !important;
     background-color: #d1d1d1 ;
   } */
+  .react-datepicker__day--highlighted {
+    background-color: #4D7D5D !important;
+    color: white; /* Optional: Change the text color for better contrast */
+  }
+  .selected-slot {
+    background-color: #4D7D5D !important;
+    color: white !important; /* Optional: Change the text color for better contrast */
+  }

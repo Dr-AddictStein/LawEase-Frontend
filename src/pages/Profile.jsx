@@ -11,6 +11,7 @@ const Profile = () => {
   const { user } = useAuthContext();
 
   const [lawyer, setLawyer] = useState(null);
+  const [initialLawyer, setInitialLawyer] = useState(null); // State to store initial lawyer data
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [experience, setExperience] = useState("");
@@ -20,6 +21,7 @@ const Profile = () => {
   const [bio, setBio] = useState("");
   const [dp, setDp] = useState("");
   const [fileHandler, setFileHandler] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
 
   const fetchLawyer = async () => {
     try {
@@ -29,6 +31,7 @@ const Profile = () => {
       const fetchedLawyer = response.data;
 
       setLawyer(fetchedLawyer);
+      setInitialLawyer(fetchedLawyer); // Store the initial lawyer data
       setFirstname(fetchedLawyer.firstname);
       setLastname(fetchedLawyer.lastname);
       setExperience(fetchedLawyer.experience);
@@ -47,6 +50,7 @@ const Profile = () => {
       console.error("Error fetching lawyer:", error);
     }
   };
+
   useEffect(() => {
     if (!user || user.user._id !== lawyer_id) {
       navigate("/");
@@ -94,12 +98,31 @@ const Profile = () => {
       );
       console.log("Form submitted successfully!", response.data);
       fetchLawyer(); // Refresh lawyer data after update
+      setShowSuccessMessage(true); // Show success message on save
+      setTimeout(() => setShowSuccessMessage(false), 3000); // Hide after 3 seconds
     } catch (error) {
-      if (error.response.status === 409) {
+      if (error.response && error.response.status === 409) {
         alert("Data already exists.");
       } else {
         console.error("Error updating lawyer:", error);
       }
+    }
+  };
+
+  const handleCancel = () => {
+    // Reset form fields to initial lawyer data
+    if (initialLawyer) {
+      setFirstname(initialLawyer.firstname);
+      setLastname(initialLawyer.lastname);
+      setExperience(initialLawyer.experience);
+      setCity(initialLawyer.city);
+      setBio(initialLawyer.bio);
+      setDp(initialLawyer.image);
+      const initialCategories = initialLawyer.category.map((cat) => ({
+        value: cat,
+        label: cat,
+      }));
+      setSelectedCategories(initialCategories);
     }
   };
 
@@ -119,9 +142,9 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <div className="bg-[#F1FFF4]">
       <Header isloggedIn={true} />
-      <div className="mt-10 mx-auto max-w-[1000px]">
+      <div className="mt-10 mx-auto max-w-[1000px] bg-white">
         <div className="border border-[#00000069]">
           <div className="bg-[#3E7D5A] w-full py-3 flex items-center justify-center text-white font-semibold">
             User Profile
@@ -145,7 +168,7 @@ const Profile = () => {
                   className="w-full text-center cursor-pointer"
                   htmlFor="file"
                 >
-                  <div className="bg-[#E9E9E9A6] rounded-[8px] mt-3 py-2 border border-[#00000042] flex items-center justify-center">
+                  <div className="bg-[#E9E9E9A6] rounded-[8px] mt-3 py-2 border border-[#00000042] flex items-center justify-center hover:brightness-95">
                     Choose image
                   </div>
                 </label>
@@ -209,12 +232,20 @@ const Profile = () => {
                     onChange={(e) => setBio(e.target.value)}
                   ></textarea>
                 </div>
+                {showSuccessMessage && (
+                  <div className="absolute mt-10 text-green-500">
+                    Update successfull !
+                  </div>
+                )}
                 <div className="mt-10 flex items-center justify-end gap-5">
-                  <button className="px-8 py-2 border border-[#AAAAAA] text-[#B5B5B5] flex items-center gap-2 rounded-[8px]">
+                  <button
+                    className="px-8 py-2 border border-[#AAAAAA] text-[#000000] flex items-center gap-2 rounded-[8px] bg-[#E9E9E9A6] hover:brightness-95"
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </button>
                   <button
-                    className="px-8 py-2 text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
+                    className="px-8 py-2 text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360] hover:brightness-110"
                     onClick={handleEdit}
                   >
                     Save

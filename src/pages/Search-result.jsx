@@ -67,8 +67,8 @@ const SearchResult = () => {
 
       <div className="my-[40px] px-3 lg:px-0 mx-auto max-w-[970px]">
         <Link to="/find-lawyer" className="flex items-center mt-8 gap-2">
-          <BsArrowLeft className="w-4 h-4" />
-          <p className="text-[14px] ">Go Back</p>
+          <BsArrowLeft className="w-6 h-6 " />
+          <p className="text-[18px]  ">Go Back</p>
         </Link>
         <div className="my-[20px] lg:my-[40px] flex items-start lg:items-center justify-between flex-col lg:flex-row gap-5 lg:gap-0">
           <h2 className="text-[20px] lg:text-[30px]">

@@ -64,7 +64,7 @@ const FindLaywer = () => {
             {laywerCategory.map((item, ind) => (
               <Link
                 key={ind}
-                className="border border-black rounded-[4px] p-3 bg-white flex flex-col items-center justify-center gap-6 hover:scale-105 transition-transform duration-300"
+                className="border border-black rounded-[4px] p-3 bg-white flex flex-col items-center justify-center gap-6 hover:scale-105 transition-transform duration-00"
                 to={item.href}
               >
                 <img

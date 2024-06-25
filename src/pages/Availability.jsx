@@ -205,7 +205,7 @@ const Availability = () => {
             <p className="text-center text-sm mt-5">
               Add Availability {currAv ? `for ${currAv.date}` : "..."}
             </p>
-            <div className="pl-5 lg:pl-20 mt-10 flex items-center gap-10">
+            <div className="pl-5 lg:pl-20 ml-2 mt-10 flex items-center gap-10">
               <h1 className="text-[20px] font-medium">Start time</h1>
               <select
                 className="px-8 py-2 border border-gray-500 rounded-[8px]"
@@ -222,7 +222,7 @@ const Availability = () => {
                 })}
               </select>
             </div>
-            <div className="pl-5 lg:pl-20 mt-5 flex items-center gap-10">
+            <div className="pl-5 lg:pl-20 ml-4 mt-5 flex items-center gap-10">
               <h1 className="text-[20px] font-medium">End time</h1>
               <select
                 className="px-8 py-2 border border-gray-500 rounded-[8px]"
@@ -244,7 +244,7 @@ const Availability = () => {
             </div>
             <div className="mt-10 flex mb-5 lg:mb-0 items-center justify-center">
               <button
-                className="px-8 py-2 border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
+                className="px-10 py-2 ml-[-15px] border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
                 onClick={handleAddRange}
               >
                 + Add
