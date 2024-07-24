@@ -22,8 +22,11 @@ const Profile = () => {
   const [dp, setDp] = useState("");
   const [fileHandler, setFileHandler] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
+<<<<<<< HEAD
 
   const DEFAULT_FAVICON = "https://via.placeholder.com/155";
+=======
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
 
   const fetchLawyer = async () => {
     try {
@@ -119,7 +122,11 @@ const Profile = () => {
       setExperience(initialLawyer.experience);
       setCity(initialLawyer.city);
       setBio(initialLawyer.bio);
+<<<<<<< HEAD
       setDp(initialLawyer.image || DEFAULT_FAVICON);
+=======
+      setDp(initialLawyer.image);
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
       const initialCategories = initialLawyer.category.map((cat) => ({
         value: cat,
         label: cat,
@@ -203,8 +210,14 @@ const Profile = () => {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                   >
+<<<<<<< HEAD
                     <option value="Regina">Regina</option>
                     <option value="Moose Jaw">Moose Jaw</option>
+=======
+                    <option value="">City</option>
+                    <option value="Moose Jaw">Moose Jaw</option>
+                    <option value="Regina">Regina</option>
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
                   </select>
                   <Select
                     value={selectedCategories}
@@ -235,7 +248,11 @@ const Profile = () => {
                 </div>
                 {showSuccessMessage && (
                   <div className="absolute mt-10 text-green-500">
+<<<<<<< HEAD
                     Update successful!
+=======
+                    Update successfull !
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
                   </div>
                 )}
                 <div className="mt-10 flex items-center justify-end gap-5">

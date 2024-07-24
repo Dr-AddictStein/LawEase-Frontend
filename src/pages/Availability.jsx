@@ -262,7 +262,11 @@ const Availability = () => {
         {currAv && currAv.times && (
           <div className="mt-5 mb-5 lg:mb-0 border w-full border-[#00000080] rounded-[8px]">
             <div className="border-b border-[#00000080] py-3 px-5">
+<<<<<<< HEAD
               <p className="text-[18px]">Current Availability for {currAv.date}</p>
+=======
+              <p className="text-sm">Current Availability for {currAv.date}</p>
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
             </div>
             <div className="px-5 lg:px-20 py-10 flex items-center gap-5 lg:gap-y-8 lg:gap-x-20 flex-wrap">
               {currAv.times.map((item, index) => (

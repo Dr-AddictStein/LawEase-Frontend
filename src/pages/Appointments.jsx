@@ -112,13 +112,22 @@ const Appointments = () => {
           </div>
           <div className="lg:col-span-3 bg-[#D9D9D926] overflow-y-auto">
             <div className="border rounded-[8px] p-5 ">
+<<<<<<< HEAD
               <p className="text-[18px] ">
                 Appointments for {date.toDateString()}
+=======
+              <p className="text-[14px] ">
+                Appointment for {date.toDateString()}
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
               </p>
               {dat.map((appo) => (
                 <div
                   key={appo._id}
+<<<<<<< HEAD
                   className="bg-white border my-2 p-5 rounded-[12px] appointment-card"
+=======
+                  className="bg-white border my-2 p-5 rounded-[8px] appointment-card"
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
                 >
                   <div className="flex items-start pb-1 border-b justify-between w-full">
                     <div>
@@ -129,9 +138,14 @@ const Appointments = () => {
                       {appo.phone}
                     </div>
                   </div>
+<<<<<<< HEAD
                   <p className="text-[#989898] mt-2 text-[14px]">{appo.slot}</p>
                   {/* <p className="text-[14px] mt-2 text-[#00000066] font-normal italic">Description</p> */}
                   <p className="mt-2 ml-1 text-[14px] text-[#00000066]">
+=======
+                  <p className="text-[14px] mt-2">Description</p>
+                  <p className="mt-2 text-[12px] text-[#00000066]">
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
                     {appo.desc}
                   </p>
                 </div>

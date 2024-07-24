@@ -26,25 +26,41 @@ const Header = () => {
           <div className="flex items-center ">
             <Link
               to="/"
+<<<<<<< HEAD
               className=" rounded-[18px] px-3  flex items-center gap-1 "
+=======
+              className=" rounded-[12px] px-3  flex items-center gap-1 "
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
             >
               <span className="pt-1"> Home</span>
             </Link>
             <Link
               to={`/profile/${user.user._id}`}
+<<<<<<< HEAD
               className="  rounded-[18px] px-3  flex items-center gap-1 "
+=======
+              className="  rounded-[12px] px-3  flex items-center gap-1 "
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
             >
               <span className="pt-1"> Profile</span>
             </Link>
             <Link
               to={`/appointments/${user.user._id}`}
+<<<<<<< HEAD
               className=" rounded-[18px] px-3  flex items-center gap-1 "
+=======
+              className=" rounded-[12px] px-3  flex items-center gap-1 "
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
             >
               <span className="pt-1"> Appointments</span>
             </Link>
             <Link
               to={`/availablity/${user.user._id}`}
+<<<<<<< HEAD
               className="  rounded-[18px] px-3  flex items-center gap-1 "
+=======
+              className="  rounded-[12px] px-3  flex items-center gap-1 "
+>>>>>>> c5666858215e3237eb3cd50b8ed9b7cf072b0a8b
             >
               <span className="pt-1"> Availablity</span>
             </Link>
