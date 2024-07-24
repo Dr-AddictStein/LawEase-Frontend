@@ -5,32 +5,32 @@ import { Link } from "react-router-dom";
 const FindLaywer = () => {
   const laywerCategory = [
     {
-      image: "/f1.png",
+      image: "/policeman.png",
       href: "/search-result/Criminal Lawyer",
       title: "Criminal Lawyer",
     },
     {
-      image: "/f2.png",
+      image: "/administrative-law.png",
       href: "/search-result/Employment Lawyer",
       title: "Employment Lawyer",
     },
     {
-      image: "/f3.png",
+      image: "/airplane-around-earth.png",
       href: "/search-result/Immigration Lawyer",
       title: "Immigration Lawyer",
     },
     {
-      image: "/f4.png",
+      image: "/personal.png",
       href: "/search-result/Personal Injury and Claim Lawyer",
       title: "Personal Injury and Claim Lawyer",
     },
     {
-      image: "/f5.png",
+      image: "/civil-rights.png",
       href: "/search-result/Civil Lawyer",
       title: "Civil Lawyer",
     },
     {
-      image: "/f6.png",
+      image: "/tax.png",
       href: "/search-result/Tax Lawyer",
       title: "Tax Lawyer",
     },
@@ -58,13 +58,23 @@ const FindLaywer = () => {
             </button>
           </form>
         </div> */}
-        <div className=" my-5 mx-auto max-w-[970px]">
+        <div className=" my-5 mx-auto max-w-[970px] ">
           <p className="text-[20px]  text-[#00000080]">Select one :</p>
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-10">
             {laywerCategory.map((item, ind) => (
-              <Link className="border border-black rounded-[4px] p-3 bg-white flex flex-col items-center justify-center gap-6" to={item.href}>
-                <img src={item.image} alt="" />
-                <p className="text-center ">{item.title}</p>
+              <Link
+                key={ind}
+                className="border border-black rounded-[4px] p-3 bg-white flex flex-col items-center justify-center gap-6 hover:scale-105 transition-transform duration-00"
+                to={item.href}
+              >
+                <img
+                  className="category-image"
+                  src={item.image}
+                  alt={item.title}
+                />
+                <p className="text-center text-lg font-semibold">
+                  {item.title}
+                </p>
               </Link>
             ))}
           </div>

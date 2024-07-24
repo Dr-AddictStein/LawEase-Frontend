@@ -11,56 +11,66 @@ const Profile = () => {
   const { user } = useAuthContext();
 
   const [lawyer, setLawyer] = useState(null);
+  const [initialLawyer, setInitialLawyer] = useState(null); // State to store initial lawyer data
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [experience, setExperience] = useState("");
   const [categoryOptions, setCategoryOptions] = useState([]); // Options for the category select
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState("Regina"); // Set default city to Regina
   const [bio, setBio] = useState("");
   const [dp, setDp] = useState("");
   const [fileHandler, setFileHandler] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
+
+  const DEFAULT_FAVICON = "https://via.placeholder.com/155";
 
   const fetchLawyer = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
+      const response = await axios.get(
+        `http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`
+      );
       const fetchedLawyer = response.data;
 
       setLawyer(fetchedLawyer);
+      setInitialLawyer(fetchedLawyer); // Store the initial lawyer data
       setFirstname(fetchedLawyer.firstname);
       setLastname(fetchedLawyer.lastname);
       setExperience(fetchedLawyer.experience);
       setCity(fetchedLawyer.city);
       setBio(fetchedLawyer.bio);
-      setDp(fetchedLawyer.image);
+      setDp(fetchedLawyer.image || DEFAULT_FAVICON);
 
       // Prepare category options from fetched lawyer data
-      const initialCategories = fetchedLawyer.category.map(cat => ({
+      const initialCategories = fetchedLawyer.category.map((cat) => ({
         value: cat,
-        label: cat
+        label: cat,
       }));
       setSelectedCategories(initialCategories);
       setCategoryOptions(initialCategories); // Set options for the select
     } catch (error) {
-      console.error('Error fetching lawyer:', error);
+      console.error("Error fetching lawyer:", error);
     }
   };
-  useEffect(() => {
 
+  useEffect(() => {
     if (!user || user.user._id !== lawyer_id) {
-      navigate('/');
+      navigate("/");
     } else {
       fetchLawyer();
     }
   }, [user, lawyer_id, navigate]);
 
   const options = [
-    { value: 'Criminal Lawyer', label: 'Criminal Lawyer' },
-    { value: 'Employment Lawyer', label: 'Employment Lawyer' },
-    { value: 'Immigration Lawyer', label: 'Immigration Lawyer' },
-    { value: 'Personal Injury and Claim Lawyer', label: 'Personal Injury and Claim Lawyer' },
-    { value: 'Civil Lawyer', label: 'Civil Lawyer' },
-    { value: 'Tax Lawyer', label: 'Tax Lawyer' }
+    { value: "Criminal Lawyer", label: "Criminal Lawyer" },
+    { value: "Employment Lawyer", label: "Employment Lawyer" },
+    { value: "Immigration Lawyer", label: "Immigration Lawyer" },
+    {
+      value: "Personal Injury and Claim Lawyer",
+      label: "Personal Injury and Claim Lawyer",
+    },
+    { value: "Civil Lawyer", label: "Civil Lawyer" },
+    { value: "Tax Lawyer", label: "Tax Lawyer" },
   ];
 
   const handleChangeMulti = (selectedOptions) => {
@@ -69,16 +79,18 @@ const Profile = () => {
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    const thumbImageUrl = fileHandler ? await uploadFile(fileHandler, Date.now().toString()) : dp;
+    const thumbImageUrl = fileHandler
+      ? await uploadFile(fileHandler, Date.now().toString())
+      : dp;
     const updatedLawyer = {
       ...lawyer,
       firstname,
       lastname,
       experience,
-      category: selectedCategories.map(option => option.value), // Extracting values from selected options
+      category: selectedCategories.map((option) => option.value), // Extracting values from selected options
       city,
       bio,
-      image: thumbImageUrl
+      image: thumbImageUrl,
     };
 
     try {
@@ -88,33 +100,55 @@ const Profile = () => {
       );
       console.log("Form submitted successfully!", response.data);
       fetchLawyer(); // Refresh lawyer data after update
+      setShowSuccessMessage(true); // Show success message on save
+      setTimeout(() => setShowSuccessMessage(false), 3000); // Hide after 3 seconds
     } catch (error) {
-      if (error.response.status === 409) {
+      if (error.response && error.response.status === 409) {
         alert("Data already exists.");
       } else {
-        console.error('Error updating lawyer:', error);
+        console.error("Error updating lawyer:", error);
       }
+    }
+  };
+
+  const handleCancel = () => {
+    // Reset form fields to initial lawyer data
+    if (initialLawyer) {
+      setFirstname(initialLawyer.firstname);
+      setLastname(initialLawyer.lastname);
+      setExperience(initialLawyer.experience);
+      setCity(initialLawyer.city);
+      setBio(initialLawyer.bio);
+      setDp(initialLawyer.image || DEFAULT_FAVICON);
+      const initialCategories = initialLawyer.category.map((cat) => ({
+        value: cat,
+        label: cat,
+      }));
+      setSelectedCategories(initialCategories);
     }
   };
 
   const uploadFile = async (file, id) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
     try {
-      const response = await axios.post(`http://localhost:4000/api/file/image/${id}`, formData);
+      const response = await axios.post(
+        `http://localhost:4000/api/file/image/${id}`,
+        formData
+      );
       return response.data.data.url;
     } catch (error) {
-      console.error('File upload failed:', error);
+      console.error("File upload failed:", error);
       throw error;
     }
   };
 
   return (
-    <div>
+    <div className="bg-[#F1FFF4]">
       <Header isloggedIn={true} />
-      <div className="mt-10 mx-auto max-w-[1000px]">
+      <div className="mt-10 mx-auto max-w-[1000px] bg-white">
         <div className="border border-[#00000069]">
-          <div className="bg-[#3E7D5A] w-full py-3 flex items-center justify-center text-white font-semibold">
+          <div className="bg-[#3E7D5A] w-full text-[18px] py-3 flex items-center justify-center text-white">
             User Profile
           </div>
           <div className="py-7 px-10">
@@ -136,7 +170,7 @@ const Profile = () => {
                   className="w-full text-center cursor-pointer"
                   htmlFor="file"
                 >
-                  <div className="bg-[#E9E9E9A6] rounded-[8px] mt-3 py-2 border border-[#00000042] flex items-center justify-center">
+                  <div className="bg-[#E9E9E9A6] rounded-[8px] mt-3 py-2 border border-[#00000042] flex items-center justify-center hover:brightness-95">
                     Choose image
                   </div>
                 </label>
@@ -160,7 +194,7 @@ const Profile = () => {
                   <input
                     type="text"
                     className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px]"
-                    placeholder="Experience"
+                    placeholder="Experience in years"
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
                   />
@@ -169,9 +203,8 @@ const Profile = () => {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                   >
-                    <option value="">City</option>
-                    <option value="Pune">Pune</option>
-                    <option value="Mumbai">Mumbai</option>
+                    <option value="Regina">Regina</option>
+                    <option value="Moose Jaw">Moose Jaw</option>
                   </select>
                   <Select
                     value={selectedCategories}
@@ -182,7 +215,11 @@ const Profile = () => {
                     styles={{
                       control: (baseStyles, state) => ({
                         ...baseStyles,
-                        height: state.selectProps.value && state.selectProps.value.length < 2 ? "55px" : "",
+                        height:
+                          state.selectProps.value &&
+                          state.selectProps.value.length < 2
+                            ? "55px"
+                            : "",
                       }),
                     }}
                   />
@@ -196,12 +233,20 @@ const Profile = () => {
                     onChange={(e) => setBio(e.target.value)}
                   ></textarea>
                 </div>
+                {showSuccessMessage && (
+                  <div className="absolute mt-10 text-green-500">
+                    Update successful!
+                  </div>
+                )}
                 <div className="mt-10 flex items-center justify-end gap-5">
-                  <button className="px-8 py-2 border border-[#AAAAAA] text-[#B5B5B5] flex items-center gap-2 rounded-[8px]">
+                  <button
+                    className="px-8 py-2 border border-[#AAAAAA] text-[#000000] flex items-center gap-2 rounded-[8px] bg-[#E9E9E9A6] hover:brightness-95"
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </button>
                   <button
-                    className="px-8 py-2 text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
+                    className="px-8 py-2 text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360] hover:brightness-110"
                     onClick={handleEdit}
                   >
                     Save

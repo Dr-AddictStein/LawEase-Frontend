@@ -13,7 +13,7 @@ const Availability = () => {
 
   useEffect(() => {
     if (!user || user.user._id !== lawyer_id) {
-      navigate('/');
+      navigate("/");
     }
   }, [lawyer_id, navigate, user]);
 
@@ -27,7 +27,9 @@ const Availability = () => {
 
   const fetchLawyer = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`);
+      const response = await axios.get(
+        `http://localhost:4000/api/lawyer/getLawyer/${lawyer_id}`
+      );
       setLawyer(response.data);
     } catch (error) {
       console.error("Error fetching lawyer:", error);
@@ -47,11 +49,15 @@ const Availability = () => {
   useEffect(() => {
     if (availability.length) {
       const currentDateStr = date.toDateString();
-      const currentAvailability = availability.find((av) => av.date === currentDateStr);
+      const currentAvailability = availability.find(
+        (av) => av.date === currentDateStr
+      );
       if (currentAvailability) {
         setCurrAv(currentAvailability);
         const lastSlotEndTime = currentAvailability.times.length
-          ? currentAvailability.times[currentAvailability.times.length - 1].range.split('-')[1]
+          ? currentAvailability.times[
+              currentAvailability.times.length - 1
+            ].range.split("-")[1]
           : "00:00";
         setStartTime(lastSlotEndTime);
         updateEndTimeOptions(lastSlotEndTime);
@@ -65,11 +71,15 @@ const Availability = () => {
 
   const handleDateChange = (date) => {
     setDate(date);
-    const selectedAvailability = availability.find((av) => av.date === date.toDateString());
+    const selectedAvailability = availability.find(
+      (av) => av.date === date.toDateString()
+    );
     if (selectedAvailability) {
       setCurrAv(selectedAvailability);
       const lastSlotEndTime = selectedAvailability.times.length
-        ? selectedAvailability.times[selectedAvailability.times.length - 1].range.split('-')[1]
+        ? selectedAvailability.times[
+            selectedAvailability.times.length - 1
+          ].range.split("-")[1]
         : "00:00";
       setStartTime(lastSlotEndTime);
       updateEndTimeOptions(lastSlotEndTime);
@@ -88,8 +98,8 @@ const Availability = () => {
 
   const updateEndTimeOptions = (startTime) => {
     const filteredEndTimeOptions = [...Array(24).keys()]
-      .filter(hour => `${hour.toString().padStart(2, '0')}:00` > startTime)
-      .map(hour => `${hour.toString().padStart(2, '0')}:00`);
+      .filter((hour) => `${hour.toString().padStart(2, "0")}:00` > startTime)
+      .map((hour) => `${hour.toString().padStart(2, "0")}:00`);
     if (filteredEndTimeOptions.length > 0) {
       setEndTime(filteredEndTimeOptions[0]);
     } else {
@@ -101,19 +111,22 @@ const Availability = () => {
     e.preventDefault();
     const newRange = `${startTime}-${endTime}`;
 
-    if (currAv.times.some(time => time.range === newRange)) {
+    if (currAv.times.some((time) => time.range === newRange)) {
       return;
     }
 
-    const updatedCurrAv = { ...currAv, times: [...currAv.times, { range: newRange }] };
+    const updatedCurrAv = {
+      ...currAv,
+      times: [...currAv.times, { range: newRange }],
+    };
     setCurrAv(updatedCurrAv);
     setLastAdded(updatedCurrAv.date);
 
-    const updatedAvailability = availability.map(av =>
+    const updatedAvailability = availability.map((av) =>
       av.date === updatedCurrAv.date ? updatedCurrAv : av
     );
 
-    if (!availability.some(av => av.date === updatedCurrAv.date)) {
+    if (!availability.some((av) => av.date === updatedCurrAv.date)) {
       updatedAvailability.push(updatedCurrAv);
     }
 
@@ -130,7 +143,9 @@ const Availability = () => {
       fetchLawyer();
 
       const lastSlotEndTime = updatedCurrAv.times.length
-        ? updatedCurrAv.times[updatedCurrAv.times.length - 1].range.split('-')[1]
+        ? updatedCurrAv.times[updatedCurrAv.times.length - 1].range.split(
+            "-"
+          )[1]
         : "00:00";
       setStartTime(lastSlotEndTime);
       updateEndTimeOptions(lastSlotEndTime);
@@ -144,11 +159,11 @@ const Availability = () => {
   };
 
   const handleDeleteRange = async (range) => {
-    const filteredTimes = currAv.times.filter(time => time.range !== range);
+    const filteredTimes = currAv.times.filter((time) => time.range !== range);
     const updatedCurrAv = { ...currAv, times: filteredTimes };
     setCurrAv(updatedCurrAv);
 
-    const updatedAvailability = availability.map(av =>
+    const updatedAvailability = availability.map((av) =>
       av.date === updatedCurrAv.date ? updatedCurrAv : av
     );
     setAvailability(updatedAvailability);
@@ -173,13 +188,13 @@ const Availability = () => {
       <div className="mx-auto px-5 lg:px-0 max-w-[970px]">
         <div className="grid my-5 grid-cols-2 gap-5">
           <Link
-            className="w-full border bg-[#F5F5F5] py-3 text-[20px] text-center rounded-[8px]"
+            className="w-full border bg-[#F5F5F5] py-3 text-[18px] text-center rounded-[8px]"
             to={`/appointments/${user.user._id}`}
           >
             Appointments
           </Link>
           <Link
-            className="w-full bg-[#4D7D5D] py-3 text-[20px] text-center text-white rounded-[8px]"
+            className="w-full bg-[#4D7D5D] py-3 text-[18px] text-center text-white rounded-[8px]"
             to={`/availability/${user.user._id}`}
           >
             Availability
@@ -187,33 +202,41 @@ const Availability = () => {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           <div className="lg:col-span-3 bg-[#F9F9F9] border border-[#00000080] rounded-[8px]">
-            <p className="text-center text-sm mt-5">
+            <p className="text-center text-[18px] mt-5">
               Add Availability {currAv ? `for ${currAv.date}` : "..."}
             </p>
-            <div className="pl-5 lg:pl-20 mt-10 flex items-center gap-10">
+            <div className="pl-5 lg:pl-20 ml-2 mt-10 flex items-center gap-10">
               <h1 className="text-[20px] font-medium">Start time</h1>
               <select
                 className="px-8 py-2 border border-gray-500 rounded-[8px]"
                 value={startTime}
                 onChange={handleStartTimeChange}
               >
-                {[...Array(24).keys()].map(hour => {
-                  const hourStr = `${hour.toString().padStart(2, '0')}:00`;
-                  return <option key={hourStr} value={hourStr}>{hourStr}</option>;
+                {[...Array(24).keys()].map((hour) => {
+                  const hourStr = `${hour.toString().padStart(2, "0")}:00`;
+                  return (
+                    <option key={hourStr} value={hourStr}>
+                      {hourStr}
+                    </option>
+                  );
                 })}
               </select>
             </div>
-            <div className="pl-5 lg:pl-20 mt-5 flex items-center gap-10">
+            <div className="pl-5 lg:pl-20 ml-4 mt-5 flex items-center gap-10">
               <h1 className="text-[20px] font-medium">End time</h1>
               <select
                 className="px-8 py-2 border border-gray-500 rounded-[8px]"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
               >
-                {[...Array(24).keys()].map(hour => {
-                  const hourStr = `${hour.toString().padStart(2, '0')}:00`;
+                {[...Array(24).keys()].map((hour) => {
+                  const hourStr = `${hour.toString().padStart(2, "0")}:00`;
                   if (`${hourStr}` > startTime) {
-                    return <option key={hourStr} value={hourStr}>{hourStr}</option>;
+                    return (
+                      <option key={hourStr} value={hourStr}>
+                        {hourStr}
+                      </option>
+                    );
                   }
                   return null;
                 })}
@@ -221,7 +244,7 @@ const Availability = () => {
             </div>
             <div className="mt-10 flex mb-5 lg:mb-0 items-center justify-center">
               <button
-                className="px-8 py-2 border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
+                className="px-10 py-2 ml-[-15px] border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
                 onClick={handleAddRange}
               >
                 + Add
@@ -229,19 +252,24 @@ const Availability = () => {
             </div>
           </div>
           <div className="w-full">
-            <Calendar onChange={handleDateChange} value={date} minDate={new Date()} />
+            <Calendar
+              onChange={handleDateChange}
+              value={date}
+              minDate={new Date()}
+            />
           </div>
         </div>
         {currAv && currAv.times && (
           <div className="mt-5 mb-5 lg:mb-0 border w-full border-[#00000080] rounded-[8px]">
             <div className="border-b border-[#00000080] py-3 px-5">
-            <p className="text-sm">
-                Current Availability for {currAv.date}
-              </p>
+              <p className="text-[18px]">Current Availability for {currAv.date}</p>
             </div>
             <div className="px-5 lg:px-20 py-10 flex items-center gap-5 lg:gap-y-8 lg:gap-x-20 flex-wrap">
               {currAv.times.map((item, index) => (
-                <div key={index} className="border px-5 py-2 border-black rounded-[4px] bg-[#D9D9D97A]">
+                <div
+                  key={index}
+                  className="border px-5 py-2 border-black rounded-[4px] bg-[#D9D9D97A]"
+                >
                   <div className="flex gap-2 justify-between items-center">
                     <p>{item.range}</p>
                     <button

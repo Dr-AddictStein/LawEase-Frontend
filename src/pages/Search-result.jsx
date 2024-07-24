@@ -67,8 +67,8 @@ const SearchResult = () => {
 
       <div className="my-[40px] px-3 lg:px-0 mx-auto max-w-[970px]">
         <Link to="/find-lawyer" className="flex items-center mt-8 gap-2">
-          <BsArrowLeft className="w-4 h-4" />
-          <p className="text-[14px] ">Go Back</p>
+          <BsArrowLeft className="w-6 h-6 " />
+          <p className="text-[18px]  ">Go Back</p>
         </Link>
         <div className="my-[20px] lg:my-[40px] flex items-start lg:items-center justify-between flex-col lg:flex-row gap-5 lg:gap-0">
           <h2 className="text-[20px] lg:text-[30px]">
@@ -80,8 +80,8 @@ const SearchResult = () => {
             onChange={(e) => setLocation(e.target.value)}
           >
             <option>Location</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Pune">Pune</option>
+            <option value="Regina">Regina</option>
+            <option value="Moose Jaw">Moose Jaw</option>
           </select>
           <select
             className="border border-black px-3 py-2 rounded-[8px]"
@@ -90,7 +90,7 @@ const SearchResult = () => {
           >
             <option>Sort</option>
             <option value="Experience">Experience</option>
-            <option value="Availability">Availability</option>
+            {/* <option value="Availability">Availability</option> */}
           </select>
         </div>
         {filteredLawyers.map((item, ind) => (
@@ -98,8 +98,8 @@ const SearchResult = () => {
             key={ind}
             className="w-full mb-5 bg-white border border-black rounded-[4px] lg:px-3 py-5 flex flex-col justify-between transition-height duration-1000 ease-in-out"
             style={{
-              maxHeight: expandedBio === ind ? '800px' : '600px',
-              overflow: 'hidden',
+              maxHeight: expandedBio === ind ? "800px" : "600px",
+              overflow: "hidden",
             }}
           >
             <div className="flex flex-col h-full lg:flex-row items-center justify-between w-full gap-3 lg:gap-[50px]">
@@ -120,9 +120,7 @@ const SearchResult = () => {
                   </button>
                 </div>
                 {expandedBio === ind && (
-                  <div className="mt-3 text-gray-700">
-                    {item.bio}
-                  </div>
+                  <div className="mt-3 text-gray-700">{item.bio}</div>
                 )}
               </div>
             </div>
