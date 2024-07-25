@@ -50,7 +50,7 @@ const LawyerProfile = () => {
     return (
         <div className="bg-[#F1FFF4] min-h-screen pb-6">
             <Header isloggedIn={true} />
-            <div className="mt-10 mx-auto max-w-[1000px] bg-white">
+            <div className="mt-2 mx-auto max-w-[1000px] bg-white">
                 <div className="flex items-center justify-between bg-[#F1FFF4] py-4">
                     <Link to="/find-lawyer" className="flex items-center gap-2">
                         <BsArrowLeft className="w-6 h-6" />
