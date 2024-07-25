@@ -36,10 +36,19 @@ const ReviewPosting = () => {
 
 
     const handleSubmit = async () => {
+        const timestamp = Date.now();
+        const date = new Date(timestamp);
+
+        // Options for formatting the date
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+
+        // Format the date to "Jul 7, 2024" format
+        const formattedDate = date.toLocaleDateString('en-US', options);
         const review = {
             clientName: clientName,
             rating: rating,
-            desc: desc
+            desc: desc,
+            date: formattedDate
         }
         try {
             const response = await axios.patch(
