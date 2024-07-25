@@ -58,7 +58,7 @@ const Join = () => {
     if (response) {
       alert(response);
     } else {
-      navigate("/");
+      // navigate("/");
     }
   };
 
