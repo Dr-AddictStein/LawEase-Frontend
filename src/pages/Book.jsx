@@ -19,7 +19,6 @@ const Book = () => {
   const [lawyer, setLawyer] = useState(null);
   const [appos, setAppos] = useState([]);
 
-
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -31,6 +30,7 @@ const Book = () => {
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [availableDates, setAvailableDates] = useState([]);
 
   const steps = ["Fill Form", "Enter OTP", "Success"]; // steps for the stepper
 
@@ -40,7 +40,12 @@ const Book = () => {
     );
     const data = await response.json();
     setLawyer(data);
+
+    // Extract available dates
+    const available = data?.availability?.map((entry) => new Date(entry.date));
+    setAvailableDates(available);
   };
+
   const fetchAppos = async () => {
     const response = await fetch(
       `http://localhost:4000/api/appointment/getAppointment`
@@ -66,7 +71,6 @@ const Book = () => {
         for (let i = 0; i < sto.length; i++) {
           let found = false;
           for (let j = 0; j < appos.length; j++) {
-            console.log("cout >> ",appos[j].date,appos[j].iscompleted,appos[j].slot,sto[i])
             if (appos[j].date === formattedDate && !appos[j].iscompleted && appos[j].slot === sto[i].range) {
               found = true;
               break;
@@ -77,19 +81,11 @@ const Book = () => {
           }
         }
         setSlots(dex);
-        console.log("zzzzz", dex);
       } else {
         setSlots([]);
       }
-
-
     }
-  }, [lawyer, date]);
-
-  useState(() => {
-    if (!slots) return;
-    
-  }, [slots])
+  }, [lawyer, date, appos]);
 
   const formatDateToReadableString = (dateObject) => {
     const utcDayOfWeek = dateObject.toLocaleDateString("en-US", {
@@ -147,7 +143,6 @@ const Book = () => {
             `http://localhost:4000/api/appointment/createAppointment/${lawyer_id}`,
             toSend
           );
-          console.log("Form submitted successfully!", response.data);
           setSuccessMessage(true);
           setTimeout(() => navigate("/"), 5000);
         } catch (error) {
@@ -157,8 +152,7 @@ const Book = () => {
             console.log(error);
           }
         }
-      }
-      else {
+      } else {
         setOtp("");
         setOtpError(true);
         return;
@@ -167,14 +161,6 @@ const Book = () => {
       setSuccessMessage(true);
       return;
     }
-
-
-
-  };
-
-  const highlightDates = () => {
-    if (!lawyer || !lawyer.availability) return [];
-    return lawyer.availability.map((entry) => new Date(entry.date));
   };
 
   return (
@@ -247,7 +233,7 @@ const Book = () => {
                   type={date}
                   selected={date}
                   onChange={handleDateChange}
-                  highlightDates={highlightDates()}
+                  includeDates={availableDates}
                   dateFormat="yyyy-MM-dd"
                   className="bg-[#E9E9E9A6] px-5 border border-[#CECECE] py-2 rounded-[8px] cursor-pointer"
                   placeholderText="Select a date"
