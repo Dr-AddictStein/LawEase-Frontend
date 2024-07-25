@@ -124,13 +124,27 @@ const SearchResult = () => {
                 )}
               </div>
             </div>
-            <div className="mt-5 text-center lg:text-right">
-              <Link
-                to={`/book-appointment/${item._id}`}
-                className="bg-[#4D836030] border border-black text-nowrap text-[19px] lg:text-[20px] font-medium rounded-[8px] shadow-md px-3 py-3"
-              >
-                Book Appointment
-              </Link>
+            <div className="flex justify-end">
+              <div className="flex gap-2 ">
+                <div className="mt-5 text-center lg:text-right">
+                  <Link
+                    to={`/lawyer-profile/${item._id}`}
+                    className="bg-[#4D836030] border border-black text-nowrap text-[19px] lg:text-[20px] font-medium rounded-[8px] shadow-md px-3 py-3 bg-yellow-300"
+                  >
+                    View Full Profile
+                  </Link>
+                </div>
+                <div className="mt-5 text-center lg:text-right">
+                  <Link
+                    to={`/book-appointment/${item._id}`}
+                    className="bg-[#4D836030] border border-black text-nowrap text-[19px] lg:text-[20px] font-medium rounded-[8px] shadow-md px-3 py-3"
+                  >
+                    Book Appointment
+                  </Link>
+                </div>
+
+              </div>
+
             </div>
           </div>
         ))}

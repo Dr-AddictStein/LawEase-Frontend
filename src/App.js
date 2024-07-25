@@ -10,6 +10,7 @@ import Availability from "./pages/Availability";
 import Profile from "./pages/Profile";
 import Book from "./pages/Book";
 import { useAuthContext } from "./hooks/useAuthContext";
+import LawyerProfile from "./pages/LawyerProfile";
 
 function App() {
   const { user } = useAuthContext();
@@ -25,6 +26,7 @@ function App() {
         <Route path="/appointments/:lawyer_id" element={user?<Appointments />:<Home/>} />
         <Route path="/availablity/:lawyer_id" element={user?<Availability />:<Home/>} />
         <Route path="/profile/:lawyer_id" element={user? <Profile />:<Home/>} />
+        <Route path="/lawyer-profile/:lawyer_id" element={<LawyerProfile/>} />
         <Route path="/book-appointment/:lawyer_id" element={<Book />} />
  
       </Routes>
