@@ -133,6 +133,7 @@ const Appointments = () => {
                   <div className="flex justify-between">
                     <div className="">
                       <p className="text-[#989898] mt-2 text-[14px]">{appo.slot}</p>
+                      <p className="text-[#989898] mt-2 text-[14px]">{appo.date}</p>
                       <p className="mt-2 text-[14px] text-[#00000066]">
                         {appo.desc}
                       </p>
