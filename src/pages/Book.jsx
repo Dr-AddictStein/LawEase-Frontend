@@ -153,7 +153,7 @@ const Book = () => {
             <BsArrowLeft className="w-6 h-6" />
             <p className="text-[18px]">Go Back</p>
           </Link>
-          <h1 className="text-[30px] font-semibold ml-[-80px]">
+          <h1 className="text-[30px] font-semibold ml-[-80px] mb-6">
             Book Appointment
           </h1>
           <div></div>
