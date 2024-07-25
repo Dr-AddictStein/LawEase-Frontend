@@ -3,6 +3,7 @@ import Header from "../layout/Header";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { BsArrowLeft } from "react-icons/bs";
+import ReviewList from "../Components/ReviewList";
 
 const LawyerProfile = () => {
     const { lawyer_id } = useParams();
@@ -27,6 +28,24 @@ const LawyerProfile = () => {
     useEffect(() => {
         fetchLawyer();
     }, []);
+
+    const reviews = [
+        {
+            clientName: "Client00",
+            rating: 4,
+            desc: "He is a good lawyer"
+        },
+        {
+            clientName: "Client00",
+            rating: 3,
+            desc: "He is a good lawyer"
+        },
+        {
+            clientName: "Client00",
+            rating: 5,
+            desc: "He is a good lawyer"
+        },
+    ]
 
     return (
         <div className="bg-[#F1FFF4] min-h-screen">
@@ -81,6 +100,7 @@ const LawyerProfile = () => {
                                             ))}
                                         </div>
                                     </div>
+                                    <ReviewList reviews={reviews || []} />
                                 </div>
 
                             </div>
