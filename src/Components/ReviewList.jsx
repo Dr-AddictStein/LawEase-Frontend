@@ -21,7 +21,7 @@ const ReviewList = ({ reviews }) => {
                 ))}
               </div>
             </div>
-            <p className="mt-2">{review.desc}</p>
+            <p className="mt-2 w-full">{review.desc}</p>
           </div>
         ))
       )}

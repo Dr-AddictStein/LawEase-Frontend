@@ -28,7 +28,7 @@ function App() {
         <Route path="/availablity/:lawyer_id" element={user?<Availability />:<Home/>} />
         <Route path="/profile/:lawyer_id" element={user? <Profile />:<Home/>} />
         <Route path="/lawyer-profile/:lawyer_id" element={<LawyerProfile/>} />
-        <Route path="/share-review" element={<ReviewPosting/>} />
+        <Route path="/share-review/:lawyer_id" element={<ReviewPosting/>} />
         <Route path="/book-appointment/:lawyer_id" element={<Book />} />
  
       </Routes>

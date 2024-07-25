@@ -48,7 +48,7 @@ const LawyerProfile = () => {
     ]
 
     return (
-        <div className="bg-[#F1FFF4] min-h-screen">
+        <div className="bg-[#F1FFF4] min-h-screen pb-6">
             <Header isloggedIn={true} />
             <div className="mt-10 mx-auto max-w-[1000px] bg-white">
                 <div className="flex items-center justify-between bg-[#F1FFF4] py-4">
@@ -71,6 +71,14 @@ const LawyerProfile = () => {
                                 <p className="flex justify-center text-center text-lg">
                                     {lawyer?.bio}
                                 </p>
+                                <div className="mt-10 text-center ">
+                                    <Link
+                                        to={`/book-appointment/${lawyer?._id}`}
+                                        className="bg-[#4D836030] border border-black text-nowrap text-[19px] lg:text-[20px] font-medium rounded-[8px] shadow-md px-3 py-3"
+                                    >
+                                        Book Appointment
+                                    </Link>
+                                </div>
                             </div>
                             <div className="lg:col-span-2">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -100,9 +108,9 @@ const LawyerProfile = () => {
                                             ))}
                                         </div>
                                     </div>
-                                    <ReviewList reviews={reviews || []} />
                                 </div>
 
+                                    <ReviewList reviews={lawyer?.reviews || []} />
                             </div>
                         </div>
                     </div>

@@ -5,6 +5,7 @@ import { FaPhoneAlt } from "react-icons/fa";
 import Calendar from "react-calendar";
 import { useAuthContext } from "../hooks/useAuthContext";
 import "react-calendar/dist/Calendar.css";
+import axios from "axios";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -129,11 +130,36 @@ const Appointments = () => {
                       {appo.phone}
                     </div>
                   </div>
-                  <p className="text-[#989898] mt-2 text-[14px]">{appo.slot}</p>
-                  {/* <p className="text-[14px] mt-2 text-[#00000066] font-normal italic">Description</p> */}
-                  <p className="mt-2 ml-1 text-[14px] text-[#00000066]">
-                    {appo.desc}
-                  </p>
+                  <div className="flex justify-between">
+                    <div className="">
+                      <p className="text-[#989898] mt-2 text-[14px]">{appo.slot}</p>
+                      {/* <p className="text-[14px] mt-2 text-[#00000066] font-normal italic">Description</p> */}
+                      <p className="mt-2 text-[14px] text-[#00000066]">
+                        {appo.desc}
+                      </p>
+                    </div>
+                    {
+                      (!appo.iscompleted) ?
+                        <div className="mt-2 flex mb-5 lg:mb-0 items-center justify-center">
+                          <button
+                            className="px-4 py-1 ml-[-15px] border border-black text-white flex items-center gap-2 rounded-[8px] bg-[#4D8360]"
+                            onClick={async () => {
+                              const response = await axios.patch(
+                                `http://localhost:4000/api/appointment/markascompleted/${appo._id}`,
+                              );
+                              fetchAppointments();
+                            }}
+                          >
+                            Mark as Completed
+                          </button>
+                        </div>
+                        :
+                        <div className="w-full bg-white gap-5 py-4 px-5 lg:px-10 text-end text-green-500">
+                          Appointment Completed.!.
+                        </div>
+                    }
+
+                  </div>
                 </div>
               ))}
             </div>
