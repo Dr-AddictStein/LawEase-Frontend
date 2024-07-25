@@ -17,6 +17,8 @@ const Book = () => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [lawyer, setLawyer] = useState(null);
+  const [appos, setAppos] = useState([]);
+
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -25,7 +27,7 @@ const Book = () => {
   const [slot, setSlot] = useState("");
   const [desc, setDesc] = useState("");
   const [otp, setOtp] = useState(""); // new state for OTP
-  const [otpError,setOtpError]=useState(false);
+  const [otpError, setOtpError] = useState(false);
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [successMessage, setSuccessMessage] = useState(false);
@@ -39,9 +41,17 @@ const Book = () => {
     const data = await response.json();
     setLawyer(data);
   };
+  const fetchAppos = async () => {
+    const response = await fetch(
+      `http://localhost:4000/api/appointment/getAppointment`
+    );
+    const data = await response.json();
+    setAppos(data);
+  };
 
   useEffect(() => {
     fetchLawyer();
+    fetchAppos();
   }, []);
 
   useEffect(() => {
@@ -51,12 +61,35 @@ const Book = () => {
         (ld) => ld.date === formattedDate
       )[0];
       if (stash) {
-        setSlots(stash.times);
+        let sto = stash.times;
+        let dex = [];
+        for (let i = 0; i < sto.length; i++) {
+          let found = false;
+          for (let j = 0; j < appos.length; j++) {
+            console.log("cout >> ",appos[j].date,appos[j].iscompleted,appos[j].slot,sto[i])
+            if (appos[j].date === formattedDate && !appos[j].iscompleted && appos[j].slot === sto[i].range) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            dex.push(sto[i]);
+          }
+        }
+        setSlots(dex);
+        console.log("zzzzz", dex);
       } else {
         setSlots([]);
       }
+
+
     }
   }, [lawyer, date]);
+
+  useState(() => {
+    if (!slots) return;
+    
+  }, [slots])
 
   const formatDateToReadableString = (dateObject) => {
     const utcDayOfWeek = dateObject.toLocaleDateString("en-US", {
@@ -82,7 +115,7 @@ const Book = () => {
     setSlot(slot);
   };
 
-  const [actualOTP,setActualOTP]=useState("");
+  const [actualOTP, setActualOTP] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,7 +141,7 @@ const Book = () => {
     }
 
     if (activeStep === 1) {
-      if(actualOTP===otp){
+      if (actualOTP === otp) {
         try {
           const response = await axios.post(
             `http://localhost:4000/api/appointment/createAppointment/${lawyer_id}`,
@@ -125,7 +158,7 @@ const Book = () => {
           }
         }
       }
-      else{
+      else {
         setOtp("");
         setOtpError(true);
         return;
@@ -233,9 +266,8 @@ const Book = () => {
                     <div
                       key={index}
                       onClick={() => handleSlotClick(sl.range)}
-                      className={`border px-5 py-2 border-black rounded-[4px] cursor-pointer ${
-                        isSelected ? "bg-[#4D7D5D] text-white" : "text-black"
-                      }`}
+                      className={`border px-5 py-2 border-black rounded-[4px] cursor-pointer ${isSelected ? "bg-[#4D7D5D] text-white" : "text-black"
+                        }`}
                     >
                       {sl.range}
                     </div>
@@ -267,10 +299,10 @@ const Book = () => {
         )}
         {activeStep === 1 && (
           <div className="w-full bg-white gap-5 border py-10 px-5 lg:px-20 border-[#00000080]">
-          {
-            otpError && 
-            <p className="text-[20px] mb-4 text-red-700 text-center">OTP is not correct.!.!.!.</p>
-          }
+            {
+              otpError &&
+              <p className="text-[20px] mb-4 text-red-700 text-center">OTP is not correct.!.!.!.</p>
+            }
             <p className="text-[20px] mb-4">Enter OTP</p>
             <input
               type="text"
