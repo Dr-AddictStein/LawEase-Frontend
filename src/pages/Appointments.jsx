@@ -19,11 +19,14 @@ const Appointments = () => {
   }, [lawyer_id, navigate, user]);
 
   const [date, setDate] = useState(new Date());
-  const [dat, setDat] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
+  const [isDateChanged, setIsDateChanged] = useState(false);
 
   const handleDateChange = (date) => {
     setDate(date);
+    setIsDateChanged(true);
+    filterAppointments(date);
   };
 
   const fetchAppointments = async () => {
@@ -32,17 +35,19 @@ const Appointments = () => {
     );
     const data = await response.json();
     setAppointments(data);
+    setFilteredAppointments(data); // Show all appointments by default
+  };
+
+  const filterAppointments = (selectedDate) => {
+    const filtered = appointments.filter(
+      (appo) => new Date(appo.date).toDateString() === selectedDate.toDateString()
+    );
+    setFilteredAppointments(filtered);
   };
 
   useEffect(() => {
     fetchAppointments();
   }, [lawyer_id]);
-
-  useEffect(() => {
-    if (appointments) {
-      setDat(appointments.filter((appo) => appo.date === date.toDateString()));
-    }
-  }, [appointments, date]);
 
   const tileClassName = ({ date: tileDate, view }) => {
     if (view === "month") {
@@ -54,7 +59,6 @@ const Appointments = () => {
         tileDate.getDate()
       );
 
-      // Check if there are appointments on the tileDate
       const hasAppointments = appointments.some((appo) => {
         const appoDate = new Date(appo.date);
         return (
@@ -64,22 +68,18 @@ const Appointments = () => {
         );
       });
 
-      // Past dates
       if (checkDate < today) {
         return "text-gray-400";
       }
 
-      // Dates with appointments
       if (hasAppointments) {
         return "react-calendar__tile--booked";
       }
 
-      // Active date (selected date)
       if (tileDate.toDateString() === date.toDateString()) {
         return "react-calendar__tile--active";
       }
 
-      // Default
       return "text-black";
     }
     return "";
@@ -114,9 +114,9 @@ const Appointments = () => {
           <div className="lg:col-span-3 bg-[#D9D9D926] overflow-y-auto">
             <div className="border rounded-[8px] p-5 ">
               <p className="text-[18px] ">
-                Appointments for {date.toDateString()}
+                {isDateChanged ? `Appointments for ${date.toDateString()}` : "All Appointments"}
               </p>
-              {dat.map((appo) => (
+              {filteredAppointments.map((appo) => (
                 <div
                   key={appo._id}
                   className="bg-white border my-2 p-5 rounded-[12px] appointment-card"
@@ -133,7 +133,6 @@ const Appointments = () => {
                   <div className="flex justify-between">
                     <div className="">
                       <p className="text-[#989898] mt-2 text-[14px]">{appo.slot}</p>
-                      {/* <p className="text-[14px] mt-2 text-[#00000066] font-normal italic">Description</p> */}
                       <p className="mt-2 text-[14px] text-[#00000066]">
                         {appo.desc}
                       </p>
@@ -158,7 +157,6 @@ const Appointments = () => {
                           Appointment Completed.!.
                         </div>
                     }
-
                   </div>
                 </div>
               ))}
